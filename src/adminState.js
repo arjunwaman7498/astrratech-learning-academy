@@ -52,10 +52,6 @@ export function beginAdminLoginEntry(storage) {
 }
 
 export function getAdminEntrySession(storage, pathname) {
-  if (pathname === ADMIN_ENTRY_PATH || pathname === `${ADMIN_ENTRY_PATH}/`) {
-    beginAdminLoginEntry(storage);
-    return "";
-  }
   return getAdminSession(storage.getItem("astratech_admin_token"));
 }
 
