@@ -1,0 +1,228 @@
+:root {
+  --content-max: 1180px;
+}
+
+.header {
+  padding-inline: max(calc((100% - var(--content-max)) / 2), 6%);
+}
+
+.section {
+  padding-block: clamp(64px, 7vw, 88px);
+}
+
+.admission-preview {
+  align-items: start;
+  gap: clamp(28px, 6vw, 72px);
+}
+
+.home-admission-section {
+  padding-block: clamp(56px, 6vw, 76px);
+}
+
+.admission-preview > div {
+  min-width: 0;
+}
+
+.footer {
+  color: #e8edf6;
+}
+
+.footer-intro {
+  color: #bdc9dd;
+}
+
+.topline {
+  color: #d8e4f5;
+}
+
+.nav a,
+.faculty-info p,
+.result-card p,
+.form-footnote {
+  color: var(--muted);
+}
+
+.notice-list,
+.notice-row {
+  border-color: var(--line);
+}
+
+.admission-steps span,
+.admission-steps svg,
+.value-card > span,
+.inline-callout > svg,
+.timeline-item > span,
+.resource-card > span,
+.contact-map svg {
+  color: var(--sage);
+}
+
+.contact-map {
+  color: var(--deep);
+}
+
+.contact-map small {
+  color: var(--muted);
+}
+
+.contact-map-embed {
+  display: block;
+  width: 100%;
+  min-height: 260px;
+  border: 0;
+  border-radius: 6px;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.admin-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  align-items: stretch;
+}
+
+.admin-sidebar,
+.admin-main {
+  min-width: 0;
+}
+
+.admin-topbar > div > span {
+  color: #9aa8bd;
+}
+
+.sample-ribbon {
+  right: -24px;
+}
+
+.value-list svg,
+.faq-side > svg {
+  color: var(--sage);
+}
+
+.result-card p {
+  color: var(--muted);
+}
+
+.course-card-wrap {
+  height: 100%;
+}
+
+.course-card {
+  height: 100%;
+  color: inherit;
+}
+
+.course-card-arrow {
+  display: grid;
+  width: 29px;
+  height: 29px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--cream);
+}
+
+.course-detail-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 520px;
+  margin-bottom: 30px;
+}
+
+.course-detail-meta > div {
+  display: grid;
+  gap: 8px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+
+.course-detail-meta small {
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: .14em;
+}
+
+.course-detail-meta strong {
+  font-size: 13px;
+}
+
+.learning-journey {
+  margin-top: 44px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+
+.learning-journey h3 {
+  margin-bottom: 0;
+}
+
+.learning-journey .admission-steps {
+  margin-bottom: 18px;
+}
+
+.home-faq-preview {
+  margin-top: 28px;
+}
+
+.home-faq-preview h3 {
+  margin-bottom: 4px;
+}
+
+.home-faq-preview .underlink {
+  margin-top: 18px;
+}
+
+.resource-download {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.resource-download p {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.resource-unavailable {
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.resource-detail .section-end {
+  justify-content: flex-start;
+}
+
+@media (max-width: 760px) {
+  .sample-ribbon {
+    position: relative;
+    inset: auto;
+    width: fit-content;
+    max-width: calc(100% - 40px);
+    margin: 20px auto 0;
+    transform: none;
+    text-align: center;
+  }
+
+}
+
+@media (max-width: 480px) {
+  .course-detail-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .resource-download .btn {
+    width: 100%;
+  }
+}

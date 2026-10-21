@@ -1,0 +1,21 @@
+.faculty-photo{background:#f8f5ef}
+.faculty-photo img{width:100%;height:100%;display:block;object-fit:cover;object-position:center 35%}
+.admin-image-field{margin-bottom:14px}
+.admin-content-form .admin-image-url-field{margin-bottom:12px}
+.admin-image-upload{display:flex;align-items:center;gap:14px;padding:13px;border:1px solid #e7e2d9;border-radius:8px;background:#f8f5ef}
+.admin-image-preview{width:76px;height:76px;display:grid;place-items:center;flex:0 0 76px;overflow:hidden;border:1px solid #e7e2d9;border-radius:6px;background:#fff;color:#3d6fd6}
+.admin-image-preview img{width:100%;height:100%;object-fit:cover}
+.admin-image-details{flex:1;min-width:0}
+.admin-image-details strong,.admin-image-details small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.admin-image-details strong{font-size:11px;color:#14233b}
+.admin-image-details small{margin-top:4px;color:#687386;font-size:9px}
+.admin-image-actions{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:10px}
+.admin-image-file-input{display:none!important}
+.admin-image-button,.admin-image-remove{min-height:31px;padding:7px 10px;border:1px solid #dcdfe7;border-radius:4px;background:#fff;color:#142a4a;font:600 9px "DM Sans",sans-serif;cursor:pointer}
+.admin-image-button:hover,.admin-image-remove:hover{border-color:#3d6fd6;color:#315fc2}
+.admin-image-upload-button{border-color:#142a4a;background:#142a4a;color:#fff}
+.admin-image-upload-button:hover{background:#315fc2;color:#fff}
+.admin-image-upload-button:disabled{opacity:.45;cursor:not-allowed}
+.admin-image-remove{color:#9a4c43}
+.admin-image-error{margin:8px 0 0;color:#9a4c43;font-size:10px}
+@media(max-width:520px){.admin-image-upload{align-items:flex-start;gap:10px;padding:10px}.admin-image-preview{width:62px;height:62px;flex-basis:62px}.admin-image-actions{gap:5px}.admin-image-button,.admin-image-remove{padding:7px}}

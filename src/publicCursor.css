@@ -1,0 +1,71 @@
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html.public-cursor-enabled,
+  html.public-cursor-enabled body,
+  html.public-cursor-enabled body * {
+    cursor: none !important;
+  }
+
+  .public-cursor {
+    position: fixed;
+    inset: 0 auto auto 0;
+    z-index: 1000;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate3d(-100px, -100px, 0);
+    transition: opacity 160ms ease;
+    will-change: transform;
+  }
+
+  .public-cursor.is-visible {
+    opacity: 1;
+  }
+
+  .public-cursor__orb,
+  .public-cursor__trail {
+    position: absolute;
+    display: block;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .public-cursor__orb {
+    top: -5px;
+    left: -5px;
+    width: 10px;
+    height: 10px;
+    border: 1px solid rgb(77 145 231 / 76%);
+    background: radial-gradient(circle at 35% 30%, rgb(168 210 255 / 72%), rgb(91 157 238 / 34%) 62%, rgb(66 127 216 / 20%));
+    box-shadow: 0 0 5px 1px rgb(85 147 225 / 30%), inset 0 0 3px rgb(255 255 255 / 58%);
+    transition: width 140ms ease, height 140ms ease, top 140ms ease, left 140ms ease, background 140ms ease, border-color 140ms ease;
+  }
+
+  .public-cursor__trail {
+    top: -1.5px;
+    left: -1.5px;
+    width: 3px;
+    height: 3px;
+    background: rgb(255 255 255 / 88%);
+    box-shadow: 0 0 4px 1px rgb(106 175 255 / 38%);
+    transition: transform 140ms ease;
+  }
+
+  .public-cursor.is-interactive .public-cursor__orb {
+    top: -6px;
+    left: -6px;
+    width: 12px;
+    height: 12px;
+    border-color: rgb(62 128 220 / 88%);
+    background: radial-gradient(circle at 35% 30%, rgb(182 218 255 / 78%), rgb(91 157 238 / 42%) 68%, rgb(66 127 216 / 26%));
+  }
+
+  .public-cursor.is-interactive .public-cursor__trail {
+    transform: scale(0.65);
+  }
+
+  .public-cursor.is-form-control .public-cursor__orb {
+    background: rgb(92 157 235 / 24%);
+    box-shadow: 0 0 4px 1px rgb(85 147 225 / 26%), inset 0 0 0 1px rgb(255 255 255 / 62%);
+  }
+}
