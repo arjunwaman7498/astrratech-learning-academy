@@ -226,3 +226,4875 @@
     width: 100%;
   }
 }
+
+
+/* =========================================
+   PREMIUM HEADER & NAVIGATION REFINEMENT
+   ========================================= */
+
+.header {
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(20, 42, 74, 0.09);
+    box-shadow: 0 5px 24px rgba(20, 42, 74, 0.045);
+    transition:
+        box-shadow 250ms ease,
+        background-color 250ms ease,
+        border-color 250ms ease;
+}
+
+.brand {
+    transition: transform 250ms ease;
+}
+
+.brand:hover {
+    transform: translateY(-1px);
+}
+
+.brand-icon {
+    box-shadow: 0 5px 14px rgba(233, 180, 95, 0.2);
+    transition:
+        transform 250ms ease,
+        box-shadow 250ms ease;
+}
+
+.brand:hover .brand-icon {
+    transform: rotate(-3deg);
+    box-shadow: 0 7px 18px rgba(233, 180, 95, 0.32);
+}
+
+.nav {
+    gap: clamp(14px, 1.7vw, 23px);
+}
+
+.nav a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding-block: 9px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    transition: color 220ms ease;
+}
+
+.nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 2px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--green);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 250ms ease;
+}
+
+.nav a:hover,
+.nav a.active {
+    color: var(--deep);
+}
+
+.nav a:hover::after,
+.nav a.active::after {
+    transform: scaleX(1);
+}
+
+.header-btn {
+    position: relative;
+    overflow: hidden;
+    border-radius: 7px;
+    box-shadow: 0 5px 14px rgba(20, 42, 74, 0.12);
+    transition:
+        transform 220ms ease,
+        box-shadow 220ms ease,
+        background-color 220ms ease;
+}
+
+.header-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 9px 22px rgba(20, 42, 74, 0.19);
+}
+
+.header-btn:active {
+    transform: translateY(0);
+}
+
+.mobile-toggle {
+    width: 42px;
+    height: 42px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    color: var(--deep);
+    transition:
+        background-color 200ms ease,
+        border-color 200ms ease,
+        transform 200ms ease;
+}
+
+.mobile-toggle:hover {
+    background: var(--cream);
+    border-color: var(--green);
+}
+
+.mobile-toggle:active {
+    transform: scale(0.96);
+}
+
+@media (max-width: 1000px) {
+    .nav {
+        gap: 12px;
+    }
+
+    .nav a {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 760px) {
+    .header {
+        height: 70px;
+        padding-inline: 5%;
+    }
+
+    .mobile-toggle {
+        display: inline-flex;
+        margin-left: auto;
+    }
+
+    .nav {
+        gap: 7px;
+        padding: 18px 5% 22px;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        box-shadow: 0 14px 25px rgba(20, 42, 74, 0.08);
+    }
+
+    .nav a {
+        width: 100%;
+        padding: 10px 0;
+        font-size: 13px;
+    }
+
+    .nav a::after {
+        right: auto;
+        width: 32px;
+        bottom: 3px;
+    }
+
+    .nav a:hover::after,
+    .nav a.active::after {
+        transform: scaleX(1);
+    }
+
+    .brand-icon {
+        width: 37px;
+        height: 37px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .header,
+    .brand,
+    .brand-icon,
+    .nav a,
+    .nav a::after,
+    .header-btn,
+    .mobile-toggle {
+        transition: none !important;
+    }
+}
+
+/* =========================================
+   PREMIUM REFINEMENT — HEADER & HERO
+   ========================================= */
+
+/* 1. More visible, premium CTA button shadow */
+.header-btn {
+    box-shadow:
+        0 5px 12px rgba(20, 42, 74, 0.12),
+        0 12px 24px rgba(20, 42, 74, 0.07);
+    transition:
+        transform 250ms ease,
+        box-shadow 250ms ease,
+        background-color 250ms ease;
+}
+
+.header-btn:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 8px 16px rgba(20, 42, 74, 0.18),
+        0 16px 30px rgba(20, 42, 74, 0.13);
+}
+
+.header-btn:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(20, 42, 74, 0.14);
+}
+
+/* 2. Improve announcement bar readability */
+.topline {
+    min-height: 38px;
+    padding: 9px 5%;
+    gap: 22px;
+    font-size: 12px;
+    line-height: 1.5;
+    letter-spacing: 0.015em;
+}
+
+.topline a {
+    transition: color 220ms ease;
+}
+
+/* 3. Reduce excessive space above the hero content */
+.hero {
+    padding-top: 52px;
+}
+
+/* 4. Keep mobile spacing comfortable */
+@media (max-width: 760px) {
+    .topline {
+        min-height: 34px;
+        padding: 7px 10px;
+        gap: 10px;
+        font-size: 10px;
+    }
+
+    .hero {
+        padding-top: 42px;
+    }
+}
+
+/* 5. Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .header-btn,
+    .topline a {
+        transition: none !important;
+    }
+}
+
+
+/* =========================================
+   ASTRATECH — PREMIUM HERO REFINEMENT
+   ========================================= */
+
+/* 1. Refine the overall hero composition */
+.hero {
+    grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+    gap: clamp(28px, 4vw, 58px);
+    padding-top: clamp(48px, 5vw, 66px);
+    padding-bottom: clamp(58px, 6vw, 76px);
+    min-height: 0;
+    overflow: clip;
+}
+
+/* 2. Improve the text column */
+.hero-copy {
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+}
+
+.hero-copy .eyebrow {
+    margin-bottom: 25px;
+}
+
+.hero h1 {
+    font-size: clamp(3.8rem, 6.2vw, 6.4rem);
+    line-height: 0.91;
+    letter-spacing: -0.075em;
+    margin: 0;
+    text-wrap: balance;
+}
+
+.hero h1 em {
+    display: inline-block;
+    margin-top: 5px;
+    line-height: 0.98;
+    letter-spacing: -0.065em;
+}
+
+.hero-lead {
+    max-width: 450px;
+    margin-top: 24px;
+    font-size: 14px;
+    line-height: 1.9;
+}
+
+.hero-actions {
+    gap: clamp(16px, 2vw, 26px);
+    margin-top: 27px;
+    flex-wrap: wrap;
+}
+
+.hero-proof {
+    margin-top: 36px;
+}
+
+/* 3. Give the image a more editorial appearance */
+.hero-visual {
+    width: 100%;
+    min-width: 0;
+    height: 470px;
+    isolation: isolate;
+    transform: none;
+}
+
+.hero-photo {
+    width: min(76%, 390px);
+    height: 405px;
+    border-radius: 220px 220px 16px 16px;
+    box-shadow:
+        0 24px 60px rgba(20, 42, 74, 0.12),
+        0 5px 16px rgba(20, 42, 74, 0.06);
+    background-position: center;
+    transition:
+        box-shadow 350ms ease,
+        transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.hero-visual:hover .hero-photo {
+    transform: translateY(-4px);
+    box-shadow:
+        0 32px 72px rgba(20, 42, 74, 0.17),
+        0 8px 22px rgba(20, 42, 74, 0.08);
+}
+
+/* 4. Refine the floating information cards */
+.float-card {
+    border-radius: 11px;
+    padding: 14px 15px;
+    border-color: rgba(20, 42, 74, 0.10);
+    box-shadow:
+        0 12px 30px rgba(20, 42, 74, 0.07),
+        0 3px 8px rgba(20, 42, 74, 0.035);
+    transition:
+        transform 300ms ease,
+        box-shadow 300ms ease;
+}
+
+.float-top {
+    top: 46px;
+    right: 0;
+}
+
+.float-bottom {
+    bottom: 34px;
+    left: 0;
+}
+
+.float-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 18px 38px rgba(20, 42, 74, 0.12),
+        0 5px 12px rgba(20, 42, 74, 0.05);
+}
+
+.float-symbol {
+    flex-shrink: 0;
+}
+
+/* 5. Make the confidence stamp more intentional */
+.hero-stamp {
+    line-height: 1.55;
+    letter-spacing: 0.13em;
+    font-weight: 700;
+}
+
+/* 6. Tablet layout */
+@media (max-width: 1000px) {
+    .hero {
+        gap: 22px;
+        padding-top: 48px;
+        padding-bottom: 58px;
+    }
+
+    .hero h1 {
+        font-size: clamp(3.6rem, 6.5vw, 5.2rem);
+    }
+
+    .hero-visual {
+        transform: none;
+        height: 420px;
+    }
+
+    .hero-photo {
+        height: 365px;
+        width: 78%;
+    }
+
+    .float-card {
+        padding: 11px;
+    }
+}
+
+/* 7. Mobile layout */
+@media (max-width: 760px) {
+    .hero {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 24px;
+        padding-top: 42px;
+        padding-bottom: 48px;
+        overflow: hidden;
+    }
+
+    .hero-copy .eyebrow {
+        margin-bottom: 19px;
+    }
+
+    .hero h1 {
+        font-size: clamp(3rem, 10vw, 4rem);
+        line-height: 0.98;
+        letter-spacing: -0.07em;
+    }
+
+    .hero h1 em {
+        margin-top: 2px;
+    }
+
+    .hero-lead {
+        max-width: 500px;
+        margin-top: 20px;
+        font-size: 13px;
+        line-height: 1.85;
+    }
+
+    .hero-actions {
+        margin-top: 23px;
+        gap: 16px;
+    }
+
+    .hero-proof {
+        margin-top: 27px;
+    }
+
+    .hero-visual {
+        height: 380px;
+        width: 100%;
+        max-width: 520px;
+        margin-inline: auto;
+    }
+
+    .hero-photo {
+        width: 72%;
+        height: 325px;
+    }
+
+    .float-top {
+        top: 25px;
+        right: 0;
+    }
+
+    .float-bottom {
+        bottom: 17px;
+        left: 0;
+    }
+
+    .hero-stamp {
+        right: 0;
+    }
+}
+
+/* 8. Small mobile screens */
+@media (max-width: 480px) {
+    .hero {
+        gap: 18px;
+        padding-top: 34px;
+        padding-bottom: 38px;
+    }
+
+    .hero h1 {
+        font-size: clamp(2.65rem, 10.5vw, 3.2rem);
+    }
+
+    .hero-visual {
+        height: 330px;
+    }
+
+    .hero-photo {
+        width: 74%;
+        height: 285px;
+    }
+
+    .float-card {
+        max-width: 72%;
+        padding: 9px;
+        gap: 7px;
+    }
+
+    .float-card strong {
+        font-size: 9px;
+    }
+
+    .float-card small {
+        font-size: 8px;
+    }
+
+    .float-symbol {
+        width: 29px;
+        height: 29px;
+    }
+
+    .hero-stamp {
+        font-size: 8px;
+    }
+}
+
+/* 9. Accessible motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .hero-photo,
+    .float-card {
+        transition: none !important;
+    }
+
+    .hero-visual:hover .hero-photo,
+    .float-card:hover {
+        transform: none;
+    }
+}
+
+/* =========================================
+   ASTRATECH — HERO LAYOUT FINISHING TOUCHES
+   ========================================= */
+
+/* Keep the headline elegant and balanced */
+.hero-copy {
+    min-width: 0;
+    max-width: 650px;
+}
+
+.hero h1 {
+    max-width: 650px;
+    font-size: clamp(3.7rem, 5.8vw, 5.8rem);
+    line-height: 0.96;
+    letter-spacing: -0.072em;
+    text-wrap: balance;
+}
+
+/* Prevent the image and text columns from competing */
+.hero-visual {
+    min-width: 0;
+    position: relative;
+}
+
+/* Keep the image caption readable above the image */
+.hero-photo {
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-photo::after {
+    content: "";
+    position: absolute;
+    inset: 48% 0 0;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(12, 25, 48, 0.12) 35%,
+        rgba(12, 25, 48, 0.72) 100%
+    );
+    pointer-events: none;
+}
+
+/* Keep the caption above the gradient */
+.hero-photo figcaption,
+.hero-photo .photo-caption {
+    position: absolute;
+    z-index: 2;
+    left: 20px;
+    right: 20px;
+    bottom: 18px;
+    color: #fff;
+    line-height: 1.5;
+}
+
+/* Responsive headline sizing */
+@media (max-width: 1000px) {
+    .hero h1 {
+        font-size: clamp(3.3rem, 6vw, 4.7rem);
+    }
+}
+
+@media (max-width: 760px) {
+    .hero-copy {
+        max-width: none;
+    }
+
+    .hero h1 {
+        max-width: 100%;
+        font-size: clamp(2.9rem, 9.5vw, 4rem);
+        line-height: 1;
+    }
+
+    .hero-photo figcaption,
+    .hero-photo .photo-caption {
+        left: 14px;
+        right: 14px;
+        bottom: 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-photo::after {
+        transition: none;
+    }
+}
+
+/* ASTRATECH — CURSOR-REACTIVE HERO HEADING */
+
+.hero-reactive-title {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-reactive-line {
+  white-space: nowrap;
+}
+
+.hero-reactive-char {
+  display: inline-block;
+  white-space: pre;
+  will-change: transform;
+  transition: transform 320ms cubic-bezier(0.2, 0.75, 0.25, 1);
+  transform: translate3d(0, 0, 0);
+}
+
+.hero-reactive-title em .hero-reactive-char {
+  font: inherit;
+}
+
+/* Keep the original mobile appearance and disable cursor motion there. */
+@media (max-width: 760px) {
+  .hero-reactive-char {
+    will-change: auto;
+    transition: none;
+    transform: none !important;
+  }
+}
+
+/* Respect accessibility settings. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-reactive-char {
+    will-change: auto;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* Astratech — preserve original hero typography */
+.hero-particle-heading {
+  position: relative;
+  width: 100%;
+  max-width: 650px;
+}
+
+.hero-particle-source {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  visibility: visible;
+  pointer-events: none;
+}
+
+.hero-particle-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: auto;
+}
+
+/* Preserve the existing mobile appearance */
+@media (max-width: 760px) {
+  .hero-particle-heading {
+    height: auto;
+  }
+
+  .hero-particle-canvas {
+    display: none;
+  }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .hero-particle-canvas {
+    display: none;
+  }
+}
+
+
+
+/* =========================================
+   HERO HEADING — RESTORE ORIGINAL TYPOGRAPHY
+   Preserve the existing dot animation.
+   ========================================= */
+
+.hero-copy h1 {
+    position: relative;
+    max-width: 650px;
+    margin: 0;
+
+    /* Restore the original bold heading */
+    font-family: inherit;
+    font-weight: 800;
+    font-size: clamp(3.7rem, 5.8vw, 5.8rem);
+    line-height: 0.96;
+    letter-spacing: -0.072em;
+    text-wrap: balance;
+
+    /* Prevent accidental changes to the heading layout */
+    font-style: normal;
+}
+
+.hero-copy h1 em {
+    display: inline-block;
+    margin-top: 5px;
+
+    /* Restore the original blue italic serif style */
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: inherit;
+    font-weight: 400;
+    font-style: italic;
+    line-height: 0.98;
+    letter-spacing: -0.065em;
+    color: #3d6fd6;
+}
+
+/* Preserve the existing mobile heading dimensions */
+@media (max-width: 760px) {
+    .hero-copy h1 {
+        max-width: 100%;
+        font-size: clamp(2.9rem, 9.5vw, 4rem);
+        line-height: 1;
+        letter-spacing: -0.07em;
+    }
+
+    .hero-copy h1 em {
+        margin-top: 2px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-copy h1 {
+        font-size: clamp(2.65rem, 10.5vw, 3.2rem);
+    }
+}
+
+/* Hero heading: preserve the original typography */
+.hero-copy .hero-reactive-heading {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  max-width: 650px;
+  margin: 0;  font-family: inherit;
+  font-size: clamp(3.7rem, 5.8vw, 5.8rem);
+  font-weight: 800;
+  line-height: 0.96;
+  letter-spacing: -0.072em;
+  text-wrap: balance;
+  color: #102342 !important;
+  -webkit-text-fill-color: #102342 !important;
+}
+
+/* Restore visible solid heading text and remove the particle canvas. */
+.hero-copy .hero-reactive-heading,
+.hero-copy .hero-reactive-heading .hero-heading-line {
+  color: #102342 !important;
+  -webkit-text-fill-color: #102342 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.hero-copy .hero-reactive-heading .hero-heading-em {
+  display: block;
+  margin-top: 5px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: inherit;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 0.98;
+  letter-spacing: -0.065em;
+  color: #3d6fd6 !important;
+  -webkit-text-fill-color: #3d6fd6 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.hero-particle-canvas,
+.hero-copy .hero-particle-canvas {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+@media (max-width: 760px) {
+  .hero-copy .hero-reactive-heading {
+    max-width: 100%;
+    font-size: clamp(2.9rem, 9.5vw, 4rem);
+    line-height: 1;
+    letter-spacing: -0.07em;
+  }
+
+  .hero-copy .hero-reactive-heading .hero-heading-em {
+    margin-top: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-copy .hero-reactive-heading {
+    font-size: clamp(2.65rem, 10.5vw, 3.2rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-copy .hero-reactive-char {
+    transform: none !important;
+    transition: none !important;
+    will-change: auto !important;
+  }
+}
+
+/* =========================================
+   ASTRATECH — SOFT AURORA HERO BACKGROUND
+   ========================================= */
+
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+/* Aurora lighting layer */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -18%;
+  z-index: -1;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at 30% 28%,
+      rgba(126, 190, 255, 0.27) 0%,
+      rgba(126, 190, 255, 0.10) 24%,
+      transparent 48%
+    ),
+    radial-gradient(
+      ellipse at 78% 24%,
+      rgba(173, 157, 255, 0.20) 0%,
+      rgba(173, 157, 255, 0.08) 26%,
+      transparent 49%
+    ),
+    radial-gradient(
+      ellipse at 74% 70%,
+      rgba(92, 146, 255, 0.19) 0%,
+      rgba(92, 146, 255, 0.07) 27%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse at 17% 72%,
+      rgba(126, 220, 255, 0.15) 0%,
+      transparent 43%
+    );
+
+  filter: blur(34px);
+  opacity: 0.9;
+  transform: translate3d(0, 0, 0);
+  animation: astratechAurora 24s ease-in-out infinite alternate;
+}
+
+/* Keep the actual hero content above the aurora */
+.hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes astratechAurora {
+  0% {
+    transform: translate3d(-1.2%, -0.6%, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(1%, 0.8%, 0) scale(1.035);
+  }
+
+  100% {
+    transform: translate3d(-0.4%, 1.2%, 0) scale(1.015);
+  }
+}
+
+/* Mobile: softer lighting and less visual movement */
+@media (max-width: 760px) {
+  .hero::before {
+    inset: -10%;
+    filter: blur(28px);
+    opacity: 0.72;
+    animation-duration: 30s;
+  }
+}
+
+/* Accessibility: remove animation when requested */
+@media (prefers-reduced-motion: reduce) {
+  .hero::before {
+    animation: none;
+  }
+}
+
+/* Full-width aurora background without changing hero layout */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* Extend the background to the viewport edges */
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+
+  /* Extend the aurora across the full viewport */
+  left: 50%;
+  width: 100vw;
+  max-width: none;
+  transform: translateX(-50%);
+
+  z-index: -1;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at 30% 25%,
+      rgba(126, 190, 255, 0.25),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 78% 25%,
+      rgba(173, 157, 255, 0.18),
+      transparent 52%
+    ),
+    radial-gradient(
+      ellipse at 72% 75%,
+      rgba(92, 146, 255, 0.16),
+      transparent 52%
+    ),
+    radial-gradient(
+      ellipse at 15% 75%,
+      rgba(126, 220, 255, 0.14),
+      transparent 48%
+    );
+
+  animation: astratechAurora 24s ease-in-out infinite alternate;
+}
+
+/* Astratech — full-viewport aurora background */
+.hero.wrap {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+  background: transparent;
+}
+
+/* Aurora spans the viewport, while hero content keeps its layout */
+.hero.wrap::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  max-width: 100vw;
+  transform: translateX(-50%);
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      ellipse at 25% 20%,
+      rgba(126, 190, 255, 0.24) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 78% 24%,
+      rgba(173, 157, 255, 0.20) 0%,
+      transparent 52%
+    ),
+    radial-gradient(
+      ellipse at 72% 78%,
+      rgba(92, 146, 255, 0.17) 0%,
+      transparent 52%
+    ),
+    radial-gradient(
+      ellipse at 18% 82%,
+      rgba(126, 220, 255, 0.14) 0%,
+      transparent 48%
+    ),
+    #ffffff;
+
+  animation: astratechAurora 24s ease-in-out infinite alternate;
+}
+
+@keyframes astratechAurora {
+  0% {
+    background-position: 0% 0%, 100% 0%, 100% 100%, 0% 100%;
+  }
+  100% {
+    background-position: 12% 15%, 88% 12%, 85% 90%, 10% 85%;
+  }
+}
+
+/* Keep the aurora subtle on smaller screens */
+@media (max-width: 760px) {
+  .hero.wrap::before {
+    background:
+      radial-gradient(
+        ellipse at 20% 15%,
+        rgba(126, 190, 255, 0.20),
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse at 85% 65%,
+        rgba(173, 157, 255, 0.15),
+        transparent 58%
+      ),
+      #ffffff;
+  }
+}
+
+/* Respect accessibility preferences */
+@media (prefers-reduced-motion: reduce) {
+  .hero.wrap::before {
+    animation: none;
+  }
+}
+
+
+
+/* ==========================================
+   ASTRATECH — PREMIUM HOMEPAGE COURSE CARDS
+   ========================================== */
+
+#root .section-soft .course-grid .course-card-wrap {
+  height: 100%;
+}
+
+#root .section-soft .course-grid .course-card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-height: 290px;
+  height: 100%;
+  padding: 28px 26px 22px;
+  overflow: hidden;
+  color: var(--navy, #102342);
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(76, 125, 235, 0.07),
+      transparent 44%
+    ),
+    #ffffff;
+  border: 1px solid rgba(16, 35, 66, 0.10);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(16, 35, 66, 0.025);
+  text-decoration: none;
+  transition:
+    transform 260ms ease,
+    border-color 260ms ease,
+    box-shadow 260ms ease,
+    background 260ms ease;
+}
+
+#root .section-soft .course-grid .course-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    #356fe0,
+    #9eb9ff,
+    #e9b85d
+  );
+  opacity: 0;
+  transform: scaleX(0.35);
+  transform-origin: left;
+  transition:
+    opacity 260ms ease,
+    transform 360ms ease;
+}
+
+#root .section-soft .course-grid .course-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+#root .section-soft .course-grid .course-icon {
+  display: grid;
+  width: 50px;
+  height: 50px;
+  flex: 0 0 50px;
+  place-items: center;
+  color: #245bd0;
+  background: linear-gradient(145deg, #f0f4ff, #e5ebff);
+  border: 1px solid rgba(64, 105, 210, 0.08);
+  border-radius: 14px;
+  transition:
+    transform 260ms ease,
+    background 260ms ease,
+    box-shadow 260ms ease;
+}
+
+#root .section-soft .course-grid .course-category {
+  color: #7785a1;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  line-height: 1.5;
+  text-align: right;
+}
+
+#root .section-soft .course-grid .course-card h3 {
+  margin: 0 0 12px;
+  color: #102342;
+  font-size: clamp(1.12rem, 1.35vw, 1.32rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.3;
+}
+
+#root .section-soft .course-grid .course-card > p {
+  margin: 0 0 26px;
+  color: #687792;
+  font-size: 0.88rem;
+  line-height: 1.85;
+}
+
+#root .section-soft .course-grid .course-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid #ece9e2;
+}
+
+#root .section-soft .course-grid .course-bottom > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7890;
+  font-size: 0.77rem;
+}
+
+#root .section-soft .course-grid .course-bottom > span:first-child svg {
+  color: #356fe0;
+}
+
+#root .section-soft .course-grid .course-card-arrow {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  place-items: center;
+  color: #18355f;
+  background: #f6f4ef;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  transition:
+    color 260ms ease,
+    background 260ms ease,
+    border-color 260ms ease,
+    transform 260ms ease;
+}
+
+#root .section-soft .course-grid .course-card-arrow svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* Desktop hover interaction */
+@media (hover: hover) and (pointer: fine) {
+  #root .section-soft .course-grid .course-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(53, 111, 224, 0.30);
+    box-shadow:
+      0 20px 42px rgba(16, 35, 66, 0.075),
+      0 4px 12px rgba(53, 111, 224, 0.045);
+    background:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(76, 125, 235, 0.12),
+        transparent 48%
+      ),
+      #ffffff;
+  }
+
+  #root .section-soft .course-grid .course-card:hover::before {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  #root .section-soft .course-grid .course-card:hover .course-icon {
+    transform: translateY(-2px) rotate(-3deg);
+    background: #e5edff;
+    box-shadow: 0 7px 16px rgba(53, 111, 224, 0.10);
+  }
+
+  #root .section-soft .course-grid .course-card:hover .course-card-arrow {
+    color: #ffffff;
+    background: #18355f;
+    border-color: #18355f;
+    transform: translate(2px, -2px);
+  }
+}
+
+/* Keyboard accessibility */
+#root .section-soft .course-grid .course-card:focus-visible {
+  outline: 3px solid rgba(53, 111, 224, 0.65);
+  outline-offset: 4px;
+}
+
+/* Tablet and mobile */
+@media (max-width: 760px) {
+  #root .section-soft .course-grid .course-card {
+    min-height: 260px;
+    padding: 24px 22px 20px;
+    border-radius: 14px;
+  }
+
+  #root .section-soft .course-grid .course-card-top {
+    margin-bottom: 24px;
+  }
+
+  #root .section-soft .course-grid .course-icon {
+    width: 46px;
+    height: 46px;
+    flex-basis: 46px;
+  }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  #root .section-soft .course-grid .course-card,
+  #root .section-soft .course-grid .course-card::before,
+  #root .section-soft .course-grid .course-icon,
+  #root .section-soft .course-grid .course-card-arrow {
+    transition: none !important;
+  }
+
+  #root .section-soft .course-grid .course-card:hover {
+    transform: none;
+  }
+}
+
+/* Programme cards: refined icon interaction */
+.course-card .course-icon {
+  transition:
+    transform 280ms cubic-bezier(0.2, 0.75, 0.25, 1),
+    background-color 280ms ease,
+    box-shadow 280ms ease;
+  transform-origin: center;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .course-card:hover .course-icon {
+    transform: translateY(-3px) rotate(-4deg);
+    background-color: #dce6ff;
+    box-shadow: 0 6px 16px rgba(49, 95, 194, 0.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .course-card .course-icon {
+    transition: none;
+  }
+
+  .course-card:hover .course-icon {
+    transform: none;
+  }
+}
+
+/* Programme heading: preserve original typography with fluid movement */
+.section-soft .programme-reactive-heading {
+  margin: 0;
+  color: #10203f;
+  font-family: inherit;
+  font-size: clamp(2.8rem, 4vw, 4rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.055em;
+}
+
+.section-soft .programme-heading-line,
+.section-soft .programme-heading-em {
+  display: block;
+}
+
+.section-soft .programme-heading-em {
+  font-style: italic;
+}
+
+.section-soft .programme-reactive-char {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* Programme heading: mobile typography */
+@media (max-width: 760px) {
+  .section-soft .programme-reactive-heading {
+    font-size: clamp(2.15rem, 7.8vw, 2.8rem);
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+  }
+}
+
+/* About section: fluid heading typography */
+#about-preview .approach-reactive-heading {
+  margin: 0;
+  color: #10203f;
+  font-family: inherit;
+  font-size: clamp(2.8rem, 4vw, 4rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.055em;
+}
+
+#about-preview .approach-heading-line,
+#about-preview .approach-heading-em {
+  display: block;
+}
+
+#about-preview .approach-heading-em {
+  font-style: italic;
+}
+
+#about-preview .approach-reactive-char {
+  display: inline-block;
+  will-change: transform;
+}
+
+@media (max-width: 760px) {
+  #about-preview .approach-reactive-heading {
+    font-size: clamp(2.15rem, 7.8vw, 2.8rem);
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+  }
+}
+
+/* About section: refined heading layout */
+#about-preview > .section-heading {
+    gap: 56px;
+    margin-bottom: 48px;
+}
+
+#about-preview > .section-heading > div {
+    flex: 1 1 60%;
+    min-width: 0;
+}
+
+#about-preview > .section-heading > p {
+    flex: 0 1 360px;
+    max-width: 360px;
+    margin-bottom: 8px;
+    line-height: 1.9;
+}
+
+@media (max-width: 760px) {
+    #about-preview > .section-heading {
+        gap: 18px;
+        margin-bottom: 32px;
+    }
+
+    #about-preview > .section-heading > div,
+    #about-preview > .section-heading > p {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    #about-preview > .section-heading > p {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+/* =========================================
+   ABOUT PREVIEW — PREMIUM INTERACTIONS
+   ========================================= */
+
+/* 1. Classroom image interaction */
+#about-preview .approach-image {
+  isolation: isolate;
+}
+
+#about-preview .approach-image > img {
+  transition:
+    transform 500ms cubic-bezier(0.2, 0.75, 0.25, 1),
+    filter 500ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #about-preview .approach-image:hover > img {
+    transform: scale(1.015);
+    filter: saturate(1.06);
+  }
+}
+
+/* 2. Floating image note */
+#about-preview .image-note {
+  box-shadow: 0 10px 28px rgba(16, 35, 66, 0.08);
+  transition:
+    transform 300ms ease,
+    box-shadow 300ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #about-preview .approach-image:hover .image-note {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 32px rgba(16, 35, 66, 0.13);
+  }
+}
+
+/* 3. Approach points */
+#about-preview .approach-point {
+  transition:
+    background-color 250ms ease,
+    padding-left 250ms ease;
+}
+
+#about-preview .approach-point > svg {
+  transition:
+    transform 250ms ease,
+    color 250ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #about-preview .approach-point:hover {
+    padding-left: 8px;
+    background-color: rgba(49, 95, 194, 0.035);
+  }
+
+  #about-preview .approach-point:hover > svg {
+    transform: translate(3px, -3px);
+    color: var(--blue, #315fc2);
+  }
+}
+
+/* 4. Learning journey heading */
+#about-preview .learning-journey > h3 {
+  margin-bottom: 0;
+  transition: color 250ms ease;
+}
+
+/* 5. Learning journey steps */
+#about-preview .admission-steps > div {
+  transition:
+    background-color 250ms ease,
+    padding-left 250ms ease;
+}
+
+#about-preview .admission-steps > div > svg {
+  transition:
+    transform 250ms ease,
+    color 250ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #about-preview .admission-steps > div:hover {
+    padding-left: 8px;
+    background-color: rgba(49, 95, 194, 0.035);
+  }
+
+  #about-preview .admission-steps > div:hover > svg {
+    transform: translate(3px, -3px);
+    color: var(--blue, #315fc2);
+  }
+}
+
+/* 6. Keyboard accessibility */
+#about-preview a:focus-visible {
+  outline: 3px solid rgba(49, 95, 194, 0.55);
+  outline-offset: 4px;
+}
+
+/* 7. Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  #about-preview .approach-image > img,
+  #about-preview .image-note,
+  #about-preview .approach-point,
+  #about-preview .approach-point > svg,
+  #about-preview .learning-journey > h3,
+  #about-preview .admission-steps > div,
+  #about-preview .admission-steps > div > svg {
+    transition: none;
+  }
+
+  #about-preview .approach-image:hover > img {
+    transform: none;
+  }
+
+  #about-preview .approach-image:hover .image-note {
+    transform: none;
+  }
+
+  #about-preview .approach-point:hover,
+  #about-preview .admission-steps > div:hover {
+    padding-left: 0;
+  }
+
+  #about-preview .approach-point:hover > svg,
+  #about-preview .admission-steps > div:hover > svg {
+    transform: none;
+  }
+}
+
+/* About Preview — mobile heading refinement */
+@media (max-width: 760px) {
+  #about-preview .section-heading {
+    display: block;
+    margin-bottom: 28px;
+  }
+
+  #about-preview .section-heading h2 {
+    font-size: clamp(32px, 8.2vw, 40px);
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  #about-preview .section-heading > p {
+    max-width: 100%;
+    margin-top: 18px;
+  }
+}
+
+/* About section: refined button shadows */
+#about-preview .approach-points > .btn,
+#about-preview .learning-journey > .btn {
+  position: relative;
+  box-shadow:
+    0 5px 12px rgba(16, 35, 66, 0.12),
+    0 2px 4px rgba(16, 35, 66, 0.06);
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    background-color 220ms ease;
+}
+
+/* Meet Astrratech: soft navy-blue shadow */
+#about-preview .approach-points > .btn:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 12px 24px rgba(16, 35, 66, 0.22),
+    0 4px 10px rgba(49, 95, 194, 0.16);
+}
+
+/* How admissions work: warm golden shadow */
+#about-preview .learning-journey > .btn {
+  box-shadow:
+    0 5px 14px rgba(226, 165, 65, 0.24),
+    0 2px 5px rgba(226, 165, 65, 0.14);
+}
+
+#about-preview .learning-journey > .btn:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 12px 26px rgba(226, 165, 65, 0.34),
+    0 4px 10px rgba(226, 165, 65, 0.20);
+}
+
+/* Keyboard accessibility */
+#about-preview .approach-points > .btn:focus-visible,
+#about-preview .learning-journey > .btn:focus-visible {
+  outline: 3px solid rgba(49, 95, 194, 0.45);
+  outline-offset: 4px;
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  #about-preview .approach-points > .btn,
+  #about-preview .learning-journey > .btn {
+    transition: none;
+  }
+
+  #about-preview .approach-points > .btn:hover,
+  #about-preview .learning-journey > .btn:hover {
+    transform: none;
+  }
+}
+
+/* Results heading: preserve typography and enable fluid movement */
+#root .section-soft .fluid-heading {
+  display: inline-block;
+  transition: color 220ms ease;
+}
+
+#root .section-soft .fluid-heading .results-reactive-char {
+  display: inline-block;
+  will-change: transform;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #root .section-soft .fluid-heading .results-reactive-char {
+    transform: none !important;
+  }
+}
+
+/* Results section: fluid heading */
+#root .section-soft .results-reactive-heading {
+  margin: 0;
+  color: #10203f;
+  font-family: inherit;
+  font-size: clamp(2.8rem, 4vw, 4rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.055em;
+}
+
+#root .section-soft .results-heading-line,
+#root .section-soft .results-heading-em {
+  display: block;
+}
+
+#root .section-soft .results-heading-em {
+  font-style: italic;
+}
+
+#root .section-soft .results-reactive-char {
+  display: inline-block;
+  will-change: transform;
+  transform-origin: center;
+}
+
+@media (max-width: 760px) {
+  #root .section-soft .results-reactive-heading {
+    font-size: clamp(2.15rem, 8.2vw, 2.8rem);
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #root .section-soft .results-reactive-char {
+    transform: none !important;
+    will-change: auto;
+  }
+}
+
+/* =========================================
+   RESULTS SECTION — PREMIUM CARD INTERACTIONS
+========================================= */
+
+#results-preview .result-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(16, 32, 63, 0.10);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.48);
+  box-shadow: 0 3px 10px rgba(16, 32, 63, 0.025);
+
+  transition:
+    transform 300ms cubic-bezier(0.2, 0.75, 0.3, 1),
+    border-color 300ms ease,
+    box-shadow 300ms ease,
+    background-color 300ms ease;
+}
+
+/* Gradient accent */
+#results-preview .result-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #315fc2, #7da7ff, #e2a541);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 300ms ease;
+  pointer-events: none;
+}
+
+/* Make the upward lift clearly visible */
+@media (hover: hover) and (pointer: fine) {
+  #results-preview .result-card:hover {
+    top: -10px;
+    border-color: rgba(49, 95, 194, 0.30);
+    background-color: #ffffff;
+    box-shadow:
+      0 22px 38px rgba(16, 32, 63, 0.12),
+      0 8px 18px rgba(49, 95, 194, 0.09);
+  }
+
+  #results-preview .result-card:hover::before {
+    transform: scaleX(1);
+  }
+}
+
+/* Position and smooth transition for the upward lift */
+#results-preview .result-card {
+  position: relative;
+  top: 0;
+  transition:
+    top 300ms ease,
+    border-color 300ms ease,
+    box-shadow 300ms ease,
+    background-color 300ms ease;
+}
+
+/* Score interaction */
+#results-preview .result-card > strong {
+  display: inline-block;
+  transition: transform 300ms ease, color 300ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #results-preview .result-card:hover > strong {
+    transform: translateY(-3px);
+    color: #174db5;
+  }
+}
+
+/* Keyboard accessibility */
+#results-preview .result-card:focus-within {
+  outline: 2px solid rgba(49, 95, 194, 0.55);
+  outline-offset: 4px;
+}
+
+/* Reduced-motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  #results-preview .result-card,
+  #results-preview .result-card::before,
+  #results-preview .result-card > strong {
+    transition: none !important;
+  }
+
+  #results-preview .result-card:hover,
+  #results-preview .result-card:hover > strong {
+    transform: none;
+  }
+}
+
+
+/* Results cards: separate numbering from scores */
+#results-preview .result-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+#results-preview .result-card .result-num {
+  display: block;
+  margin-bottom: 22px;
+  line-height: 1;
+}
+
+#results-preview .result-card > strong {
+  display: block;
+  margin-bottom: 12px;
+}
+
+/* =========================================
+   RESULTS — PREMIUM SAMPLE NOTICE
+========================================= */
+
+#results-preview .results-note {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px 24px;
+  border: 1px solid rgba(49, 95, 194, 0.12);
+  border-left: 3px solid #315fc2;
+  border-radius: 9px;
+  background: linear-gradient(
+    110deg,
+    #f0f4ff 0%,
+    #edf2ff 55%,
+    #f7f8ff 100%
+  );
+  box-shadow: 0 4px 14px rgba(16, 32, 63, 0.035);
+  transition:
+    border-color 250ms ease,
+    box-shadow 250ms ease,
+    background-color 250ms ease;
+}
+
+/* Refined shield icon */
+#results-preview .results-note > svg {
+  flex-shrink: 0;
+  width: 23px;
+  height: 23px;
+  color: #2459c4;
+  stroke-width: 1.9;
+}
+
+/* Clear, readable disclaimer */
+#results-preview .results-note p {
+  margin: 0;
+  color: #243858;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+#results-preview .results-note p strong {
+  color: #10203f;
+  font-weight: 700;
+}
+
+/* Subtle hover refinement */
+@media (hover: hover) and (pointer: fine) {
+  #results-preview .results-note:hover {
+    border-color: rgba(49, 95, 194, 0.24);
+    box-shadow:
+      0 8px 22px rgba(16, 32, 63, 0.06),
+      0 2px 6px rgba(49, 95, 194, 0.04);
+  }
+}
+
+/* Mobile spacing */
+@media (max-width: 600px) {
+  #results-preview .results-note {
+    gap: 11px;
+    padding: 16px;
+  }
+
+  #results-preview .results-note > svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  #results-preview .results-note p {
+    font-size: 11px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  #results-preview .results-note {
+    transition: none;
+  }
+}
+
+/* =========================================
+   RESULTS — PREMIUM CTA BUTTON
+========================================= */
+
+#results-preview .section-end > .btn {
+  box-shadow:
+    0 5px 12px rgba(16, 32, 63, 0.14),
+    0 2px 4px rgba(16, 32, 63, 0.08);
+
+  transition:
+    transform 250ms ease,
+    box-shadow 250ms ease,
+    background-color 250ms ease;
+}
+
+/* Smooth upward movement and richer shadow */
+@media (hover: hover) and (pointer: fine) {
+  #results-preview .section-end > .btn:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 12px 24px rgba(16, 32, 63, 0.22),
+      0 5px 10px rgba(49, 95, 194, 0.12);
+  }
+}
+
+/* Keyboard accessibility */
+#results-preview .section-end > .btn:focus-visible {
+  outline: 2px solid #315fc2;
+  outline-offset: 4px;
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  #results-preview .section-end > .btn {
+    transition: none;
+  }
+
+  #results-preview .section-end > .btn:hover {
+    transform: none;
+  }
+}
+
+
+/* Faculty section: fluid cursor-reactive heading */
+#faculty-preview .faculty-reactive-heading {
+  margin: 0;
+  color: #10203f;
+  font-family: inherit;
+  font-size: clamp(2.8rem, 4vw, 4rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.055em;
+}
+
+#faculty-preview .faculty-heading-line,
+#faculty-preview .faculty-heading-em {
+  display: block;
+}
+
+#faculty-preview .faculty-heading-em {
+  font-style: italic;
+}
+
+#faculty-preview .faculty-reactive-char {
+  display: inline-block;
+  will-change: transform;
+  transform-origin: center;
+}
+
+@media (max-width: 760px) {
+  #faculty-preview .faculty-reactive-heading {
+    font-size: clamp(2rem, 7.2vw, 2.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.045em;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  #faculty-preview .faculty-heading-line,
+  #faculty-preview .faculty-heading-em {
+    display: block;
+    max-width: 100%;
+  }
+
+  #faculty-preview .faculty-reactive-char {
+    white-space: pre-wrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #faculty-preview .faculty-reactive-char {
+    transform: none !important;
+    will-change: auto;
+  }
+}
+
+/* Faculty preview: smooth premium image interaction */
+#faculty-preview .faculty-photo {
+  position: relative;
+  overflow: hidden;
+}
+
+#faculty-preview .faculty-photo img {
+  display: block;
+  width: 100%;
+  transition: transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  will-change: transform;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #faculty-preview .faculty-card:hover .faculty-photo img {
+    transform: scale(1.055);
+  }
+}
+
+#faculty-preview .faculty-photo .faculty-tag {
+  transition:
+    transform 300ms ease,
+    box-shadow 300ms ease,
+    background-color 300ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #faculty-preview .faculty-card:hover .faculty-tag {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(16, 32, 63, 0.16);
+    background-color: #ffffff;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #faculty-preview .faculty-photo img,
+  #faculty-preview .faculty-photo .faculty-tag {
+    transition: none;
+  }
+
+  #faculty-preview .faculty-card:hover .faculty-photo img,
+  #faculty-preview .faculty-card:hover .faculty-tag {
+    transform: none;
+  }
+}
+
+/* Faculty preview: premium card hover interaction */
+#faculty-preview .faculty-card {
+  position: relative;
+  top: 0;
+  border: 1px solid rgba(16, 32, 63, 0.10);
+  border-radius: 8px;
+  transition:
+    top 300ms ease,
+    border-color 300ms ease,
+    box-shadow 300ms ease,
+    background-color 300ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #faculty-preview .faculty-card:hover {
+    top: -7px;
+    border-color: rgba(49, 95, 194, 0.30);
+    background-color: #ffffff;
+    box-shadow:
+      0 20px 34px rgba(16, 32, 63, 0.12),
+      0 6px 16px rgba(49, 95, 194, 0.07);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #faculty-preview .faculty-card {
+    transition: none;
+  }
+
+  #faculty-preview .faculty-card:hover {
+    top: 0;
+  }
+}
+
+/* FACULTY — refined names and details */
+
+.faculty-card .faculty-info {
+  align-items: flex-start;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.faculty-card .faculty-info h3 {
+  margin: 0 0 6px;
+  color: #10203f;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.35;
+  letter-spacing: -0.025em;
+  transition: color 220ms ease;
+}
+
+.faculty-card .faculty-info > svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #2459d3;
+  transition: transform 220ms ease;
+}
+
+.faculty-card .faculty-info p {
+  margin: 0 0 7px;
+  color: #52627c;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.faculty-card .faculty-info small {
+  display: block;
+  color: #71809a;
+  font-size: 10px;
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+}
+
+.faculty-card .faculty-desc {
+  margin-top: 13px;
+  color: #53627a;
+  font-size: 11px;
+  line-height: 1.85;
+  letter-spacing: 0.005em;
+}
+
+.faculty-card:hover .faculty-info h3 {
+  color: #2459d3;
+}
+
+.faculty-card:hover .faculty-info > svg {
+  transform: translate(2px, -2px);
+}
+
+@media (max-width: 760px) {
+  .faculty-card .faculty-info h3 {
+    font-size: 15px;
+  }
+
+  .faculty-card .faculty-desc {
+    font-size: 11px;
+    line-height: 1.8;
+  }
+}
+
+/* FACULTY — balanced content spacing */
+
+.faculty-card .faculty-info {
+  margin: 18px 18px 0;
+}
+
+.faculty-card .faculty-desc {
+  margin: 13px 18px 18px;
+}
+
+/* Keep content spacing comfortable on smaller screens */
+@media (max-width: 760px) {
+  .faculty-card .faculty-info {
+    margin: 16px 14px 0;
+  }
+
+  .faculty-card .faculty-desc {
+    margin: 12px 14px 16px;
+  }
+}
+
+/* FACULTY — consistent card structure */
+
+.faculty-grid {
+  align-items: stretch;
+}
+
+.faculty-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.faculty-card .faculty-photo {
+  flex-shrink: 0;
+}
+
+.faculty-card .faculty-info {
+  flex-shrink: 0;
+}
+
+.faculty-card .faculty-desc {
+  flex-grow: 1;
+}
+
+/* Faculty section — premium link interaction */
+.faculty-grid + .section-end .underlink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-radius: 8px;
+  color: #10203f;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    color 220ms ease,
+    background-color 220ms ease,
+    transform 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.faculty-grid + .section-end .underlink svg {
+  transition: transform 220ms ease;
+}
+
+.faculty-grid + .section-end .underlink:hover {
+  color: #174fc5;
+  background-color: #f2f6ff;
+  transform: translateY(-2px);
+  box-shadow: 0 7px 18px rgba(16, 35, 66, 0.09);
+}
+
+.faculty-grid + .section-end .underlink:hover svg {
+  transform: translateX(4px);
+}
+
+.faculty-grid + .section-end .underlink:focus-visible {
+  outline: 2px solid #315fc2;
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faculty-grid + .section-end .underlink,
+  .faculty-grid + .section-end .underlink svg {
+    transition: none;
+  }
+}
+/* Student Stories — fluid reactive heading */
+.page-hero .about-reactive-heading {
+  margin: 0;
+}
+
+.page-hero .about-heading-line,
+.page-hero .about-heading-em {
+  display: block;
+}
+
+.page-hero .about-reactive-char {
+  display: inline-block;
+  will-change: transform;
+  transform-origin: center;
+}
+
+@media (max-width: 760px) {
+  .page-hero .about-reactive-heading {
+    font-size: clamp(2.15rem, 8.2vw, 2.8rem);
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-hero .about-reactive-char {
+    transform: none !important;
+    will-change: auto;
+  }
+}
+
+/* Student testimonials: refined stars and quotations */
+.testimonial .stars {
+  color: #d99b32;
+  font-size: 13px;
+  letter-spacing: 3px;
+  line-height: 1;
+  margin-bottom: 22px;
+}
+
+.testimonial blockquote {
+  margin: 0;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.testimonial-person strong {
+  display: block;
+  font-weight: 600;
+}
+
+.testimonial-person small {
+  display: block;
+  margin-top: 4px;
+  color: #64748b;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonial {
+    transition: none !important;
+  }
+}
+
+/* TESTIMONIAL CARDS — HOVER LIFT FIX */
+
+.testimonial-grid .testimonial {
+  position: relative;
+  z-index: 1;
+  border: 1px solid #e8e5df;
+  border-radius: 10px;
+  transform: translateY(0);
+  transition:
+    transform 280ms ease,
+    box-shadow 280ms ease,
+    border-color 280ms ease;
+}
+
+.testimonial-grid .testimonial:hover {
+  transform: translateY(-7px) !important;
+  z-index: 5;
+  border-color: rgba(49, 95, 194, 0.4);
+  box-shadow:
+    0 18px 38px rgba(16, 35, 66, 0.12),
+    0 5px 12px rgba(49, 95, 194, 0.08);
+}
+
+.testimonial-grid .testimonial-featured {
+  border-color: #e0e7fb;
+}
+
+.testimonial-grid .testimonial-featured:hover {
+  transform: translateY(-7px) !important;
+  border-color: rgba(49, 95, 194, 0.55);
+  box-shadow:
+    0 20px 42px rgba(16, 35, 66, 0.14),
+    0 6px 16px rgba(49, 95, 194, 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-grid .testimonial {
+    transition: none;
+  }
+
+  .testimonial-grid .testimonial:hover {
+    transform: none !important;
+  }
+}
+
+/* TESTIMONIALS — TYPOGRAPHY AND SPACING */
+
+.testimonial-grid .testimonial {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Star rating */
+.testimonial-grid .stars {
+  color: #d99527;
+  font-size: 14px;
+  letter-spacing: 3px;
+  line-height: 1;
+  margin-bottom: 22px;
+}
+
+/* Testimonial quote */
+.testimonial-grid .testimonial blockquote {
+  margin: 0;
+  color: #10203f;
+  font-size: 18px;
+  line-height: 1.75;
+  letter-spacing: -0.01em;
+  flex: 1;
+}
+
+/* Student information */
+.testimonial-grid .testimonial-person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+/* Initials avatar */
+.testimonial-grid .testimonial-person > span {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  color: #10203f;
+  background: #f8e7cb;
+}
+
+/* Name and role */
+.testimonial-grid .testimonial-person > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.testimonial-grid .testimonial-person strong {
+  color: #10203f;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.testimonial-grid .testimonial-person small {
+  color: #64748b;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* Featured middle card avatar */
+.testimonial-grid .testimonial-featured .testimonial-person > span {
+  background: #dfe7ff;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .testimonial-grid .testimonial {
+    padding: 22px;
+  }
+
+  .testimonial-grid .testimonial blockquote {
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  .testimonial-grid .stars {
+    margin-bottom: 18px;
+  }
+
+  .testimonial-grid .testimonial-person {
+    margin-top: 22px;
+  }
+}
+
+/* =========================================
+   NOTICES SECTION — FLUID REACTIVE HEADING
+   ========================================= */
+
+#notices-preview .notices-section-heading {
+  align-items: flex-end;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+
+#notices-preview .notices-section-heading > div {
+  flex: 1 1 60%;
+  min-width: 0;
+}
+
+#notices-preview .notices-section-heading > p {
+  flex: 0 1 390px;
+  max-width: 390px;
+  margin-bottom: 8px;
+  line-height: 1.9;
+}
+
+#notices-preview .notices-reactive-heading {
+  margin: 0;
+  color: #10203f;
+  font-family: inherit;
+  font-size: clamp(2.8rem, 4vw, 4rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.055em;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+#notices-preview .notices-heading-line {
+  display: block;
+  white-space: nowrap;
+}
+
+#notices-preview .notices-reactive-char {
+  display: inline-block;
+  position: relative;
+  transform: translate3d(0, 0, 0);
+  transform-origin: center center;
+  transition: transform 180ms ease-out;
+  will-change: transform;
+}
+
+/* Keep the heading stable on touch devices */
+@media (hover: none), (pointer: coarse) {
+  #notices-preview .notices-reactive-char {
+    transform: none !important;
+    transition: none;
+    will-change: auto;
+  }
+}
+
+/* Mobile layout */
+@media (max-width: 760px) {
+  #notices-preview .notices-section-heading {
+    display: block;
+    margin-bottom: 32px;
+  }
+
+  #notices-preview .notices-reactive-heading {
+    font-size: clamp(2rem, 8.2vw, 2.8rem);
+    line-height: 1.14;
+    letter-spacing: -0.045em;
+  }
+
+  #notices-preview .notices-heading-line {
+    white-space: normal;
+  }
+
+  #notices-preview .notices-section-heading > p {
+    max-width: 100%;
+    margin-top: 18px;
+    margin-bottom: 0;
+  }
+}
+
+/* Respect accessibility preferences */
+@media (prefers-reduced-motion: reduce) {
+  #notices-preview .notices-reactive-char {
+    transform: none !important;
+    transition: none;
+    will-change: auto;
+  }
+}
+
+/* ========================================
+   NOTICES SECTION — PREMIUM REFINEMENTS
+======================================== */
+
+.notice-list {
+  border-top: 1px solid rgba(16, 32, 63, 0.10);
+}
+
+.notice-row {
+  position: relative;
+  padding: 27px 12px 27px 3px;
+  border-bottom: 1px solid rgba(16, 32, 63, 0.10);
+  transition:
+    background-color 240ms ease,
+    padding-left 240ms ease,
+    padding-right 240ms ease;
+}
+
+.notice-row > div h3 {
+  transition: color 220ms ease;
+}
+
+.notice-row > svg {
+  transition:
+    transform 240ms ease,
+    color 240ms ease;
+  color: #2458c5;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .notice-row:hover {
+    padding-left: 14px;
+    padding-right: 8px;
+    background-color: rgba(255, 255, 255, 0.58);
+  }
+
+  .notice-row:hover > div h3 {
+    color: #2458c5;
+  }
+
+  .notice-row:hover > svg {
+    transform: translate(4px, -4px);
+  }
+}
+
+/* Notices button */
+.section-soft .section-end .btn,
+.section .section-end .btn {
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    background-color 220ms ease;
+  box-shadow:
+    0 5px 12px rgba(16, 35, 66, 0.12),
+    0 2px 4px rgba(16, 35, 66, 0.06);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .section-soft .section-end .btn:hover,
+  .section .section-end .btn:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 12px 24px rgba(16, 35, 66, 0.20),
+      0 4px 10px rgba(49, 95, 194, 0.14);
+  }
+}
+
+.section-soft .section-end .btn:focus-visible,
+.section .section-end .btn:focus-visible {
+  outline: 3px solid rgba(49, 95, 194, 0.35);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notice-row,
+  .notice-row > div h3,
+  .notice-row > svg,
+  .section-soft .section-end .btn,
+  .section .section-end .btn {
+    transition: none !important;
+  }
+
+  .notice-row:hover,
+  .section-soft .section-end .btn:hover,
+  .section .section-end .btn:hover {
+    transform: none;
+  }
+}
+
+/* ========================================
+   ADMISSIONS PREVIEW — SCOPED INTERACTIONS
+======================================== */
+
+#admissions-preview .admission-steps > div {
+  transition:
+    padding-left 220ms ease,
+    background-color 220ms ease;
+}
+
+#admissions-preview .admission-steps > div > span,
+#admissions-preview .admission-steps > div > svg {
+  transition:
+    color 220ms ease,
+    transform 220ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #admissions-preview .admission-steps > div:hover {
+    padding-left: 12px;
+    background-color: rgba(255, 255, 255, 0.55);
+  }
+
+  #admissions-preview .admission-steps > div:hover > span {
+    color: #d99a32;
+  }
+
+  #admissions-preview .admission-steps > div:hover > svg {
+    transform: translate(4px, -4px);
+    color: #2458c5;
+  }
+}
+
+/* FAQ interactions */
+#admissions-preview .faq-item,
+#admissions-preview .faq-row,
+#admissions-preview .faq-list > div {
+  transition: background-color 220ms ease;
+}
+
+#admissions-preview .faq-item button,
+#admissions-preview .faq-row button,
+#admissions-preview .faq-list button {
+  transition: color 200ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #admissions-preview .faq-item:hover,
+  #admissions-preview .faq-row:hover,
+  #admissions-preview .faq-list > div:hover {
+    background-color: rgba(255, 255, 255, 0.55);
+  }
+
+  #admissions-preview .faq-item button:hover,
+  #admissions-preview .faq-row button:hover,
+  #admissions-preview .faq-list button:hover {
+    color: #2458c5;
+  }
+}
+
+/* Explore admissions button */
+#admissions-preview a.btn,
+#admissions-preview button.btn {
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    background-color 220ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #admissions-preview a.btn:hover,
+  #admissions-preview button.btn:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 12px 24px rgba(16, 35, 66, 0.18),
+      0 4px 10px rgba(49, 95, 194, 0.12);
+  }
+}
+
+#admissions-preview a:focus-visible,
+#admissions-preview button:focus-visible {
+  outline: 3px solid rgba(49, 95, 194, 0.35);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #admissions-preview .admission-steps > div,
+  #admissions-preview .admission-steps > div > span,
+  #admissions-preview .admission-steps > div > svg,
+  #admissions-preview .faq-item,
+  #admissions-preview .faq-row,
+  #admissions-preview .faq-list > div,
+  #admissions-preview .faq-item button,
+  #admissions-preview .faq-row button,
+  #admissions-preview .faq-list button,
+  #admissions-preview a.btn,
+  #admissions-preview button.btn {
+    transition: none !important;
+  }
+}
+
+/* Admissions preview — FAQ hover interaction */
+#admissions-preview .admissions-faq-item {
+  transition: background-color 220ms ease;
+}
+
+#admissions-preview .admissions-faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  transition:
+    color 220ms ease,
+    padding-left 220ms ease;
+}
+
+#admissions-preview .admissions-faq-item summary span {
+  transition: color 220ms ease;
+}
+
+#admissions-preview .admissions-faq-item summary svg {
+  flex-shrink: 0;
+  transition:
+    color 220ms ease,
+    transform 220ms ease;
+}
+
+#admissions-preview .admissions-faq-item summary:hover {
+  padding-left: 8px;
+  color: #2455a4;
+}
+
+#admissions-preview .admissions-faq-item summary:hover span {
+  color: #2455a4;
+}
+
+#admissions-preview .admissions-faq-item summary:hover svg {
+  color: #e2a541;
+  transform: rotate(90deg);
+}
+
+#admissions-preview .admissions-faq-item[open] summary svg {
+  transform: rotate(45deg);
+}
+
+#admissions-preview .admissions-faq-item[open] summary:hover svg {
+  transform: rotate(90deg);
+}
+
+#admissions-preview .admissions-faq-item summary:focus-visible {
+  outline: 2px solid rgba(36, 85, 164, 0.5);
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #admissions-preview .admissions-faq-item,
+  #admissions-preview .admissions-faq-item summary,
+  #admissions-preview .admissions-faq-item summary span,
+  #admissions-preview .admissions-faq-item summary svg {
+    transition: none;
+  }
+}
+
+/* Admissions Preview — View all FAQs link */
+#admissions-preview .home-faq-preview > .underlink {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  margin-top: 6px;
+  padding: 9px 0;
+  color: #10203f;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 220ms ease, transform 220ms ease;
+}
+
+/* Subtle underline that grows on hover */
+#admissions-preview .home-faq-preview > .underlink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 3px;
+  width: 100%;
+  height: 1px;
+  background: #e2a541;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 240ms ease;
+}
+
+/* Arrow animation */
+#admissions-preview .home-faq-preview > .underlink svg {
+  flex-shrink: 0;
+  transition: transform 220ms ease, color 220ms ease;
+}
+
+/* Hover and keyboard focus */
+#admissions-preview .home-faq-preview > .underlink:hover {
+  color: #2454a6;
+}
+
+#admissions-preview .home-faq-preview > .underlink:hover::after {
+  transform: scaleX(1);
+}
+
+#admissions-preview .home-faq-preview > .underlink:hover svg {
+  transform: translateX(4px);
+  color: #e2a541;
+}
+
+#admissions-preview .home-faq-preview > .underlink:focus-visible {
+  outline: 2px solid #315fc2;
+  outline-offset: 5px;
+  border-radius: 2px;
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  #admissions-preview .home-faq-preview > .underlink,
+  #admissions-preview .home-faq-preview > .underlink::after,
+  #admissions-preview .home-faq-preview > .underlink svg {
+    transition: none;
+  }
+
+  #admissions-preview .home-faq-preview > .underlink:hover svg {
+    transform: none;
+  }
+}
+
+/* Admissions Preview — fluid heading */
+#admissions-preview .admissions-reactive-heading {
+  margin: 0;
+  color: #10203f;
+  font-family: inherit;
+  font-size: clamp(2.8rem, 4vw, 4rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.055em;
+}
+
+#admissions-preview .admissions-heading-line {
+  display: block;
+}
+
+#admissions-preview .admissions-heading-em {
+  display: inline;
+  font-style: italic;
+}
+
+#admissions-preview .admissions-reactive-char {
+  display: inline-block;
+  transform-origin: center;
+  will-change: transform;
+}
+
+@media (max-width: 760px) {
+  #admissions-preview .admissions-reactive-heading {
+    font-size: clamp(2.15rem, 8.2vw, 2.8rem);
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #admissions-preview .admissions-reactive-char {
+    transform: none !important;
+    will-change: auto;
+  }
+}
+
+
+/* Footer-only fluid heading */
+#root .footer-reactive-heading {
+  margin: 0;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: clamp(2.6rem, 4vw, 3.8rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.055em;
+}
+
+#root .footer-heading-line {
+  display: block;
+}
+
+#root .footer-heading-em {
+  color: #f2b84b;
+  font-style: italic;
+}
+
+#root .footer-reactive-char {
+  display: inline-block;
+  transform-origin: center;
+  will-change: transform;
+}
+
+@media (max-width: 760px) {
+  #root .footer-reactive-heading {
+    font-size: clamp(2.1rem, 8vw, 2.8rem);
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #root .footer-reactive-char {
+    transform: none !important;
+    will-change: auto;
+  }
+}         
+
+
+/* =====================================================
+   ASTRRATECH — UNIFIED PREMIUM CTA + FOOTER
+   One consistent background, clean transition,
+   responsive layout and restrained interactions.
+===================================================== */
+
+/* ---------- Shared visual foundation ---------- */
+
+.cta-strip,
+.footer {
+  position: relative;
+  isolation: isolate;
+  color: #ffffff;
+  background-color: #0e1d36;
+}
+
+/* Prevent decorative elements from creating extra layers */
+.cta-strip {
+  overflow: hidden;
+  background:
+    radial-gradient(
+      ellipse at 18% 0%,
+      rgba(49, 95, 194, 0.13),
+      transparent 48%
+    ),
+    #0e1d36;
+}
+
+/* Remove the duplicated semicircle from both sections */
+.cta-strip::before,
+.footer::before {
+  content: none !important;
+}
+
+/* ---------- CTA section ---------- */
+
+.cta-strip {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.cta-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.cta-inner h2 {
+  max-width: 760px;
+  margin-top: 0;
+  margin-bottom: 0;
+  color: #ffffff;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.cta-inner h2 em {
+  color: #f0b95c;
+  font-style: italic;
+}
+
+/* CTA button */
+.cta-inner > .btn {
+  flex-shrink: 0;
+  min-height: 52px;
+  padding: 0 25px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 9px;
+  box-shadow:
+    0 7px 18px rgba(0, 0, 0, 0.20),
+    0 2px 5px rgba(240, 185, 92, 0.12);
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    filter 220ms ease;
+}
+
+.cta-inner > .btn:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.04);
+  box-shadow:
+    0 13px 26px rgba(0, 0, 0, 0.25),
+    0 4px 12px rgba(240, 185, 92, 0.18);
+}
+
+.cta-inner > .btn:focus-visible {
+  outline: 2px solid #f0b95c;
+  outline-offset: 5px;
+}
+
+/* ---------- Footer foundation ---------- */
+
+.footer {
+  overflow: hidden;
+  background:
+    radial-gradient(
+      ellipse at 92% 0%,
+      rgba(49, 95, 194, 0.07),
+      transparent 38%
+    ),
+    #0e1d36;
+}
+
+/* Main footer columns */
+.footer .footer-main {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1.35fr 0.85fr 0.95fr 1fr;
+  gap: clamp(26px, 4vw, 64px);
+  align-items: start;
+  padding-top: 38px;
+  padding-bottom: 44px;
+}
+
+/* Brand */
+.footer .footer-main > div:first-child .brand {
+  width: fit-content;
+  transition: transform 220ms ease;
+}
+
+.footer .footer-main > div:first-child .brand:hover {
+  transform: translateY(-2px);
+}
+
+.footer .footer-intro {
+  max-width: 290px;
+  margin-top: 20px;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 11px;
+  line-height: 1.95;
+}
+
+/* Footer headings */
+.footer .footer-main h4 {
+  position: relative;
+  width: fit-content;
+  margin: 3px 0 26px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.footer .footer-main h4::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: #f0b95c;
+  transform-origin: left;
+  transition: width 220ms ease;
+}
+
+.footer .footer-main > div:hover h4::after {
+  width: 34px;
+}
+
+/* Explore and Student Corner */
+.footer .footer-main > div:nth-child(2),
+.footer .footer-main > div:nth-child(3) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footer .footer-main > div:nth-child(2) > a,
+.footer .footer-main > div:nth-child(3) > a {
+  width: fit-content;
+  max-width: 100%;
+  margin-bottom: 13px;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 11px;
+  line-height: 1.65;
+  text-decoration: none;
+  transition:
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.footer .footer-main > div:nth-child(2) > a:hover,
+.footer .footer-main > div:nth-child(3) > a:hover {
+  color: #f2bd61;
+  transform: translateX(3px);
+}
+
+/* Contact details */
+.footer .footer-main > div:nth-child(4) > a,
+.footer .footer-main > div:nth-child(4) > span {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 15px;
+  color: rgba(255, 255, 255, 0.80);
+  font-size: 11px;
+  line-height: 1.8;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.footer .footer-main > div:nth-child(4) > a {
+  transition:
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.footer .footer-main > div:nth-child(4) > a:hover {
+  color: #f2bd61;
+  transform: translateX(3px);
+}
+
+.footer .footer-main > div:nth-child(4) svg {
+  flex: 0 0 15px;
+  margin-top: 2px;
+  color: #f2bd61;
+}
+
+/* Copyright and legal links */
+.footer .footer-bottom {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-top: 22px;
+  padding-bottom: 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.footer .footer-bottom > span {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 10px;
+  line-height: 1.8;
+}
+
+.footer .footer-bottom > div {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 14px 24px;
+}
+
+.footer .footer-bottom > div > a {
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 10px;
+  text-decoration: none;
+  transition: color 180ms ease;
+}
+
+.footer .footer-bottom > div > a:hover {
+  color: #f2bd61;
+}
+
+/* Demo ribbon */
+.footer .sample-ribbon {
+  pointer-events: none;
+}
+
+/* Keyboard accessibility */
+.cta-strip a:focus-visible,
+.footer a:focus-visible {
+  outline: 2px solid #f2bd61;
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+
+/* ---------- Tablet ---------- */
+
+@media (max-width: 900px) {
+  .cta-inner {
+    gap: 28px;
+  }
+
+  .footer .footer-main {
+    grid-template-columns: 1.2fr 1fr;
+    column-gap: 44px;
+    row-gap: 34px;
+  }
+
+  .footer .footer-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .footer .footer-bottom > div {
+    justify-content: flex-start;
+  }
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 760px) {
+  .cta-inner {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  .cta-inner h2 {
+    max-width: 100%;
+    font-size: clamp(2.2rem, 8.5vw, 3.2rem);
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+  }
+
+  .cta-inner > .btn {
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  .footer .footer-main {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px 22px;
+    padding-top: 30px;
+    padding-bottom: 32px;
+  }
+
+  .footer .footer-main > div:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .footer .footer-intro {
+    max-width: 320px;
+    margin-top: 16px;
+  }
+
+  .footer .footer-main h4 {
+    margin-bottom: 22px;
+  }
+
+  .footer .footer-bottom {
+    gap: 16px;
+    padding-top: 20px;
+    padding-bottom: 24px;
+  }
+
+  .footer .footer-bottom > div {
+    gap: 14px 20px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+  .footer .footer-main {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+
+  .footer .footer-main > div:first-child {
+    grid-column: auto;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-inner > .btn,
+  .footer .footer-main a,
+  .footer .footer-main h4::after,
+  .footer .footer-bottom > div > a {
+    transition: none;
+  }
+
+  .cta-inner > .btn:hover,
+  .footer .footer-main a:hover,
+  .footer .footer-main > div:first-child .brand:hover {
+    transform: none;
+  }
+}
+
+
+/* =========================================
+   CTA + FOOTER — SEAMLESS NAVY SECTION
+   Append at the very bottom of stage1.css
+========================================= */
+
+/* Use one consistent navy background */
+.cta-strip,
+.footer {
+  background: #0e1d36 !important;
+  position: relative;
+  isolation: isolate;
+}
+
+/* Remove decorative circles that make the sections
+   look like they have separate background designs */
+.cta-strip::before,
+.cta-strip::after,
+.footer::before,
+.footer::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Remove the visible divider between CTA and footer */
+.cta-strip {
+  border-bottom: 0 !important;
+  margin-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+.footer {
+  border-top: 0 !important;
+  margin-top: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Keep CTA content comfortably spaced */
+.cta-strip .cta-inner {
+  position: relative;
+  z-index: 1;
+  padding-top: 64px;
+  padding-bottom: 64px;
+}
+
+/* Keep footer content aligned with the CTA */
+.footer .footer-main {
+  padding-top: 42px;
+}
+
+/* Avoid accidental gaps caused by child margins */
+main > .cta-strip {
+  margin-bottom: 0 !important;
+}
+
+#root > .footer,
+#root footer.footer {
+  margin-top: 0 !important;
+}
+
+/* Preserve the existing button styling */
+.cta-strip .cta-inner > .btn {
+  position: relative;
+  z-index: 2;
+}
+
+/* Mobile spacing */
+@media (max-width: 760px) {
+  .cta-strip .cta-inner {
+    padding-top: 42px;
+    padding-bottom: 42px;
+  }
+
+  .footer .footer-main {
+    padding-top: 30px;
+  }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .cta-strip .cta-inner > .btn {
+    transition: none !important;
+  }
+
+  .cta-strip .cta-inner > .btn:hover {
+    transform: none !important;
+  }
+}
+
+/* =========================================
+   FIX: UNWANTED SPACE BETWEEN CTA AND FOOTER
+========================================= */
+
+#root main > .cta-strip {
+  margin-bottom: 0 !important;
+  padding-bottom: 48px !important;
+}
+
+#root main > .cta-strip + .footer,
+#root .cta-strip + footer {
+  margin-top: 0 !important;
+}
+
+/* Keep CTA content properly aligned */
+#root .cta-strip .cta-inner {
+  min-height: 0 !important;
+}
+
+/* Mobile spacing */
+@media (max-width: 760px) {
+  #root main > .cta-strip {
+    padding-top: 48px !important;
+    padding-bottom: 40px !important;
+  }
+}
+
+/* =========================================
+   FIX: REDUCE CTA-TO-FOOTER EMPTY SPACE
+========================================= */
+
+/* Reduce the CTA section's vertical height */
+#root main > .cta-strip {
+  padding-top: 44px !important;
+  padding-bottom: 44px !important;
+  margin-bottom: 0 !important;
+}
+
+/* Keep CTA content aligned and compact */
+#root main > .cta-strip .cta-inner {
+  min-height: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  align-items: center;
+}
+
+/* Remove extra spacing above the footer columns */
+#root footer.footer {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Control the footer's own top spacing */
+#root footer.footer .footer-main {
+  padding-top: 28px !important;
+}
+
+/* Mobile: keep the CTA compact */
+@media (max-width: 560px) {
+  #root main > .cta-strip {
+    padding-top: 34px !important;
+    padding-bottom: 34px !important;
+  }
+
+  #root footer.footer .footer-main {
+    padding-top: 22px !important;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+  #root main > .cta-strip {
+    padding-top: 28px !important;
+    padding-bottom: 28px !important;
+  }
+}
+
+/* =========================================
+   FOOTER — MOBILE LAYOUT REFINEMENT
+   ========================================= */
+
+@media (max-width: 760px) {
+  /* Keep the brand and description aligned */
+  #root .footer .footer-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 22px;
+    row-gap: 32px;
+    align-items: start;
+  }
+
+  /* Brand occupies the full first row */
+  #root .footer .footer-brand-column {
+    grid-column: 1 / -1;
+    min-width: 0;
+    margin: 0;
+  }
+
+  #root .footer .footer-brand-column .brand {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  #root .footer .footer-intro {
+    max-width: 340px;
+    margin-top: 16px;
+    line-height: 1.8;
+  }
+
+  /* Explore and Student corner share the next row */
+  #root .footer .footer-link-column {
+    min-width: 0;
+    margin: 0;
+  }
+
+  #root .footer .footer-link-column h4,
+  #root .footer .footer-contact-column h4 {
+    margin-bottom: 20px;
+  }
+
+  #root .footer .footer-link-column a {
+    display: block;
+    overflow-wrap: anywhere;
+    line-height: 1.6;
+  }
+
+  /* Contact occupies a full row below the two link columns */
+  #root .footer .footer-contact-column {
+    grid-column: 1 / -1;
+    min-width: 0;
+    margin: 0;
+  }
+
+  #root .footer .footer-contact-column > a,
+  #root .footer .footer-address {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    line-height: 1.7;
+  }
+
+  #root .footer .footer-contact-column svg {
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  /* Copyright and legal links */
+  #root .footer .footer-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  #root .footer .footer-bottom > span {
+    line-height: 1.8;
+  }
+
+  #root .footer .footer-legal-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+  }
+}
+
+/* =========================================
+   MOBILE CTA — balanced heading and button
+========================================= */
+@media (max-width: 760px) {
+  #root main > .cta-strip .cta-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 26px;
+    min-height: 0 !important;
+    padding-top: 42px !important;
+    padding-bottom: 42px !important;
+  }
+
+  #root main > .cta-strip .cta-inner > div {
+    width: 100%;
+    min-width: 0;
+  }
+
+  #root main > .cta-strip .footer-reactive-heading {
+    max-width: 100%;
+    margin: 0;
+    font-size: clamp(30px, 8.2vw, 38px);
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  #root main > .cta-strip .cta-inner > .btn {
+    align-self: flex-start;
+    margin: 0;
+  }
+}
+
+/* =========================================
+   MOBILE FOOTER — balanced two-column layout
+========================================= */
+@media (max-width: 760px) {
+  #root .footer .footer-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 24px;
+    row-gap: 34px;
+    align-items: start;
+  }
+
+  /* Brand spans both columns */
+  #root .footer .footer-brand-column {
+    grid-column: 1 / -1;
+    min-width: 0;
+    width: 100%;
+    margin: 0;
+  }
+
+  #root .footer .footer-intro {
+    max-width: 100%;
+    margin-bottom: 0;
+    line-height: 1.8;
+  }
+
+  /* Explore occupies the first column */
+  #root .footer .footer-link-column:nth-child(2) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  /* Student corner occupies the second column */
+  #root .footer .footer-link-column:nth-child(3) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  /* Contact follows Explore in the first column */
+  #root .footer .footer-contact-column {
+    grid-column: 1;
+    grid-row: 3;
+    min-width: 0;
+    width: 100%;
+  }
+
+  #root .footer .footer-link-column,
+  #root .footer .footer-contact-column {
+    min-width: 0;
+    margin: 0;
+  }
+
+  #root .footer .footer-contact-column a,
+  #root .footer .footer-address {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  #root .footer .footer-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  #root .footer .footer-legal-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 18px;
+  }
+}
+
+/* =========================================
+   ABOUT PAGE — PREMIUM REFINEMENT
+   Scoped exclusively to #about-page
+========================================= */
+
+#about-page .about-philosophy {
+  gap: clamp(42px, 6vw, 88px);
+}
+
+
+/* About page — permanent arch */
+#about-page .about-philosophy .editorial-image {
+  display: block;
+  width: 100%;
+  max-width: 500px;
+  height: 420px;
+  object-fit: cover;
+  object-position: center;
+  justify-self: center;
+  align-self: center;
+  border-radius: 40% 40% 15px 15px;
+  box-shadow: 0 18px 42px rgba(16, 32, 63, 0.08);
+  transition:
+    transform 500ms ease,
+    box-shadow 500ms ease;
+}
+
+/* Hover — keep the arch, enhance the effect */
+#about-page .about-philosophy:hover .editorial-image {
+  transform: scale(1.015);
+  border-radius: 40% 40% 15px 15px;
+  box-shadow: 0 24px 45px rgba(16, 32, 63, 0.13);
+}
+
+
+/* Philosophy heading */
+#about-page .about-philosophy-content h2 {
+  margin: 20px 0 22px;
+  font-size: clamp(2.4rem, 3.7vw, 3.6rem);
+  line-height: 1.12;
+  letter-spacing: -0.055em;
+}
+
+#about-page .about-philosophy-content h2 em {
+  color: #315fc2;
+  font-family: Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.065em;
+}
+
+/* Philosophy paragraph */
+#about-page .about-philosophy-content .body-copy {
+  max-width: 540px;
+  font-size: 13px;
+  line-height: 1.95;
+}
+
+/* Philosophy checklist */
+#about-page .value-list {
+  gap: 0;
+  margin-top: 26px;
+}
+
+#about-page .value-list p {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 13px 0;
+  border-bottom: 1px solid rgba(16, 32, 63, 0.09);
+  font-size: 12px;
+  transition: padding-left 220ms ease;
+}
+
+#about-page .value-list p:last-child {
+  border-bottom: 0;
+}
+
+#about-page .value-list p svg {
+  flex: 0 0 auto;
+  color: #315fc2;
+}
+
+#about-page .value-list p:hover {
+  padding-left: 5px;
+}
+
+/* Values section */
+#about-page .about-values .section-heading {
+  margin-bottom: 42px;
+}
+
+/* Value cards */
+#about-page .value-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #e8e2d7;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.48);
+  transition:
+    transform 260ms ease,
+    box-shadow 260ms ease,
+    border-color 260ms ease,
+    background-color 260ms ease;
+}
+
+#about-page .value-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(49, 95, 194, 0.3);
+  background: #fff;
+  box-shadow: 0 16px 34px rgba(16, 32, 63, 0.08);
+}
+
+#about-page .value-card > span {
+  color: #315fc2;
+  letter-spacing: 0.04em;
+}
+
+#about-page .value-card h3 {
+  transition: color 220ms ease;
+}
+
+#about-page .value-card:hover h3 {
+  color: #315fc2;
+}
+
+
+/* Animated accent line on value cards */
+#about-page .value-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 20px;
+  right: 20px;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    #356fe0,
+    #9eb9ff,
+    #e9b85d
+  );
+  opacity: 0;
+  transform: scaleX(0.25);
+  transform-origin: left;
+  transition:
+    opacity 260ms ease,
+    transform 360ms ease;
+  pointer-events: none;
+}
+
+#about-page .value-card:hover::before {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  #about-page .value-card::before {
+    transition: none;
+  }
+}
+
+
+/* Responsive layout */
+@media (max-width: 760px) {
+  #about-page .about-philosophy {
+    gap: 32px;
+  }
+
+  #about-page .about-philosophy .editorial-image {
+    width: 100%;
+    max-width: 100%;
+    height: 320px;
+    border-radius: 18px;
+  }
+
+  #about-page .about-philosophy-content h2 {
+    font-size: clamp(2rem, 7.5vw, 2.7rem);
+    line-height: 1.14;
+  }
+
+  #about-page .about-philosophy-content h2 br {
+    display: none;
+  }
+
+  #about-page .about-philosophy-content .body-copy {
+    font-size: 13px;
+  }
+
+  #about-page .about-values .section-heading {
+    margin-bottom: 28px;
+  }
+
+  #about-page .value-card {
+    min-width: 0;
+  }
+}
+
+/* Reduced-motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  #about-page .editorial-image,
+  #about-page .value-card,
+  #about-page .value-list p,
+  #about-page .value-card h3 {
+    transition: none !important;
+  }
+
+  #about-page .about-philosophy:hover .editorial-image,
+  #about-page .value-card:hover,
+  #about-page .value-list p:hover {
+    transform: none;
+  }
+}
+
+
+/* =========================================
+   ABOUT PAGE — HERO REACTIVE HEADING
+   Scoped to the About page heading only
+========================================= */
+
+.page-hero .about-reactive-heading {
+  margin: 22px 0;
+  color: #10203f;
+  font-size: clamp(3rem, 6.5vw, 5.4rem);
+  font-weight: 600;
+  line-height: 1.06;
+  letter-spacing: -0.055em;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+.page-hero .about-reactive-heading .about-heading-line {
+  display: block !important;
+  width: 100%;
+}
+
+.page-hero .about-reactive-heading .about-heading-em {
+  display: block !important;
+  margin-left: 0;
+}
+
+.page-hero .about-heading-em {
+  display: block;
+  color: #3d6fd6;
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.07em;
+}
+
+.page-hero .about-reactive-char,
+.section .about-reactive-char {
+  display: inline-block;
+  position: relative;
+  transform-origin: center;
+  will-change: transform;
+}
+
+@media (max-width: 760px) {
+  .page-hero .about-reactive-heading {
+    font-size: clamp(2.65rem, 9vw, 3.4rem);
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-hero .about-reactive-char {
+    transform: none !important;
+    will-change: auto;
+  }
+}
+
+/* Fix About page reactive heading line layout */
+.page-hero .about-reactive-heading,
+.section .about-reactive-heading {
+  display: block;
+  width: 100%;
+}
+
+.page-hero .about-reactive-heading > .about-heading-line,
+.section .about-reactive-heading > .about-heading-line {
+  display: block !important;
+  width: 100%;
+  clear: both;
+}
+
+.page-hero .about-reactive-heading > .about-heading-em,
+.section .about-reactive-heading > .about-heading-em {
+  display: block !important;
+  margin-left: 0 !important;
+}
+
+
+
+/* ABOUT PAGE — MOBILE ARCH IMAGE */
+@media (max-width: 760px) {
+  #about-page .about-philosophy .editorial-image {
+    width: 100%;
+    max-width: 380px;
+    height: 345px;
+    object-fit: cover;
+    object-position: center;
+    justify-self: center;
+    align-self: center;
+    border-radius: 48% 48% 18px 18px;
+  }
+
+  #about-page .about-philosophy:hover .editorial-image {
+    border-radius: 48% 48% 18px 18px;
+  }
+}
+
+
+
+/* ABOUT PAGE — VALUES HEADING REFINEMENT */
+#about-page .about-values .about-reactive-heading {
+  margin: 0;
+  color: #10203f;
+  font-size: clamp(2.8rem, 5.2vw, 4rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.055em;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+#about-page .about-values .about-heading-line {
+  display: block !important;
+  width: 100%;
+}
+
+#about-page .about-values .about-heading-em {
+  color: #315fc2;
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.065em;
+}
+
+#about-page .about-values .about-reactive-char {
+  display: inline-block;
+  transform-origin: center;
+  will-change: transform;
+}
+
+@media (max-width: 760px) {
+  #about-page .about-values .about-reactive-heading {
+    font-size: clamp(2.4rem, 8vw, 3.2rem);
+    line-height: 1.12;
+  }
+}
+
+
+
+/* ==========================================
+   ASTRATECH — COURSES PAGE CARD REFINEMENT
+   Scoped exclusively to #courses-page
+========================================== */
+
+#courses-page .course-grid .course-card-wrap {
+  height: 100%;
+}
+
+#courses-page .course-grid .course-card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 290px;
+  padding: 28px 26px 22px;
+  overflow: hidden;
+  color: #102342;
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(76, 125, 235, 0.07),
+      transparent 44%
+    ),
+    #fff;
+  border: 1px solid rgba(16, 35, 66, 0.10);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(16, 35, 66, 0.025);
+  text-decoration: none;
+  transition:
+    transform 260ms ease,
+    border-color 260ms ease,
+    box-shadow 260ms ease,
+    background 260ms ease;
+}
+
+#courses-page .course-grid .course-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 2px;
+  background: linear-gradient(90deg, #356fe0, #9eb9ff, #e9b85d);
+  opacity: 0;
+  transform: scaleX(0.35);
+  transform-origin: left;
+  transition:
+    opacity 260ms ease,
+    transform 360ms ease;
+  pointer-events: none;
+}
+
+#courses-page .course-grid .course-card-arrow {
+  transition:
+    color 260ms ease,
+    background 260ms ease,
+    border-color 260ms ease,
+    transform 260ms ease;
+}
+
+/* Hover effects for mouse and trackpad */
+@media (hover: hover) and (pointer: fine) {
+  #courses-page .course-grid .course-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(53, 111, 224, 0.30);
+    box-shadow:
+      0 20px 42px rgba(16, 35, 66, 0.075),
+      0 4px 12px rgba(53, 111, 224, 0.045);
+    background:
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(76, 125, 235, 0.12),
+        transparent 48%
+      ),
+      #fff;
+  }
+
+  #courses-page .course-grid .course-card:hover::before {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  #courses-page .course-grid .course-card:hover .course-icon {
+    transform: translateY(-3px) rotate(-4deg);
+    background-color: #dce6ff;
+    box-shadow: 0 6px 16px rgba(49, 95, 194, 0.12);
+  }
+
+  #courses-page .course-grid .course-card:hover .course-card-arrow {
+    color: #fff;
+    background: #18355f;
+    border-color: #18355f;
+    transform: translate(2px, -2px);
+  }
+}
+
+/* Keyboard accessibility */
+#courses-page .course-grid .course-card:focus-visible {
+  outline: 3px solid rgba(53, 111, 224, 0.65);
+  outline-offset: 4px;
+}
+
+/* Mobile sizing */
+@media (max-width: 760px) {
+  #courses-page .course-grid .course-card {
+    min-height: 260px;
+    padding: 24px 22px 20px;
+    border-radius: 14px;
+  }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  #courses-page .course-grid .course-card,
+  #courses-page .course-grid .course-card::before,
+  #courses-page .course-grid .course-card .course-icon,
+  #courses-page .course-grid .course-card-arrow {
+    transition: none !important;
+  }
+
+  #courses-page .course-grid .course-card:hover,
+  #courses-page .course-grid .course-card:hover .course-icon,
+  #courses-page .course-grid .course-card:hover .course-card-arrow {
+    transform: none;
+  }
+}
+
+
+/* Courses page — Ask a question button hover */
+#courses-page .inline-callout a,
+#courses-page .inline-callout button {
+  transition:
+    transform 250ms ease,
+    box-shadow 250ms ease,
+    background-color 250ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #courses-page .inline-callout a:hover,
+  #courses-page .inline-callout button:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 10px 24px rgba(16, 35, 66, 0.18),
+      0 3px 8px rgba(53, 111, 224, 0.12);
+  }
+}
+
+#courses-page .inline-callout a:focus-visible,
+#courses-page .inline-callout button:focus-visible {
+  outline: 3px solid rgba(53, 111, 224, 0.65);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #courses-page .inline-callout a,
+  #courses-page .inline-callout button {
+    transition: none !important;
+  }
+
+  #courses-page .inline-callout a:hover,
+  #courses-page .inline-callout button:hover {
+    transform: none;
+  }
+}
+
+/* ==========================================
+   ASTRATECH — FULL FACULTY PAGE CARD EFFECTS
+   Homepage styles remain unchanged
+========================================== */
+
+#faculty-page .faculty-card {
+  position: relative;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(16, 32, 63, 0.10);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(16, 35, 66, 0.025);
+  transition:
+    top 300ms ease,
+    border-color 300ms ease,
+    box-shadow 300ms ease,
+    background-color 300ms ease;
+}
+
+#faculty-page .faculty-photo {
+  position: relative;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+#faculty-page .faculty-photo img {
+  display: block;
+  width: 100%;
+  transition: transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+#faculty-page .faculty-photo .faculty-tag {
+  transition:
+    transform 300ms ease,
+    box-shadow 300ms ease,
+    background-color 300ms ease;
+}
+
+#faculty-page .faculty-info h3 {
+  transition: color 250ms ease;
+}
+
+#faculty-page .faculty-info > svg {
+  flex-shrink: 0;
+  transition: transform 250ms ease;
+}
+
+/* Hover — lift, shadow, image zoom and details */
+@media (hover: hover) and (pointer: fine) {
+  #faculty-page .faculty-card:hover {
+    top: -7px;
+    border-color: rgba(49, 95, 194, 0.35);
+    background-color: #ffffff;
+    box-shadow:
+      0 20px 34px rgba(16, 32, 63, 0.12),
+      0 6px 16px rgba(49, 95, 194, 0.07);
+  }
+
+  #faculty-page .faculty-card:hover .faculty-photo img {
+    transform: scale(1.055);
+  }
+
+  #faculty-page .faculty-card:hover .faculty-tag {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(16, 32, 63, 0.16);
+    background-color: #ffffff;
+  }
+
+  #faculty-page .faculty-card:hover .faculty-info h3 {
+    color: #2459d3;
+  }
+
+  #faculty-page .faculty-card:hover .faculty-info > svg {
+    transform: translate(3px, -3px);
+  }
+}
+
+/* Keyboard accessibility */
+#faculty-page .faculty-card:focus-visible {
+  outline: 3px solid rgba(53, 111, 224, 0.65);
+  outline-offset: 4px;
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  #faculty-page .faculty-card,
+  #faculty-page .faculty-photo img,
+  #faculty-page .faculty-photo .faculty-tag,
+  #faculty-page .faculty-info h3,
+  #faculty-page .faculty-info > svg {
+    transition: none !important;
+  }
+
+  #faculty-page .faculty-card:hover {
+    top: 0;
+  }
+
+  #faculty-page .faculty-card:hover .faculty-photo img,
+  #faculty-page .faculty-card:hover .faculty-tag,
+  #faculty-page .faculty-card:hover .faculty-info > svg {
+    transform: none;
+  }
+}
+
+/* ==========================================
+   ASTRATECH — RESULTS PAGE CARD ANIMATIONS
+   Scoped exclusively to #results-page
+========================================== */
+
+#results-page .result-card {
+  position: relative;
+  top: 0;
+  overflow: hidden;
+  border: 1px solid rgba(16, 35, 66, 0.10);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(16, 35, 66, 0.025);
+  transition:
+    top 280ms ease,
+    transform 280ms ease,
+    border-color 280ms ease,
+    box-shadow 280ms ease,
+    background-color 280ms ease;
+}
+
+/* Accent line revealed on hover */
+#results-page .result-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 2px;
+  background: linear-gradient(90deg, #356fe0, #9eb9ff, #e9b85d);
+  opacity: 0;
+  transform: scaleX(0.35);
+  transform-origin: left;
+  transition:
+    opacity 280ms ease,
+    transform 360ms ease;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #results-page .result-card:hover {
+    top: -7px;
+    border-color: rgba(53, 111, 224, 0.35);
+    box-shadow:
+      0 20px 38px rgba(16, 35, 66, 0.12),
+      0 6px 16px rgba(53, 111, 224, 0.07);
+    background-color: #fff;
+  }
+
+  #results-page .result-card:hover::before {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+/* Keyboard accessibility */
+#results-page .result-card:focus-visible {
+  outline: 3px solid rgba(53, 111, 224, 0.65);
+  outline-offset: 4px;
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  #results-page .result-card,
+  #results-page .result-card::before {
+    transition: none !important;
+  }
+
+  #results-page .result-card:hover {
+    top: 0;
+    transform: none;
+  }
+}
+
+/* FACULTY PAGE — MOBILE HEADING FIX */
+@media (max-width: 760px) {
+  #faculty-page {
+    overflow-x: clip;
+  }
+
+  #root .page-hero .about-reactive-heading {
+    font-size: clamp(2rem, 7.2vw, 2.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.045em;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  #root .page-hero .about-heading-line,
+  #root .page-hero .about-heading-em {
+    display: block;
+    max-width: 100%;
+  }
+
+  #root .page-hero .about-reactive-char {
+    white-space: pre-wrap;
+  }
+}
+/* ==========================================
+   ASTRATECH — RESOURCES PAGE CARD INTERACTIONS
+   Scoped exclusively to #resources-page
+========================================== */
+
+#resources-page .resource-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(16, 35, 66, 0.10);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(16, 35, 66, 0.025);
+  transition:
+    transform 280ms ease,
+    border-color 280ms ease,
+    box-shadow 280ms ease,
+    background-color 280ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #resources-page .resource-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(53, 111, 224, 0.30);
+    box-shadow:
+      0 20px 42px rgba(16, 35, 66, 0.075),
+      0 4px 12px rgba(53, 111, 224, 0.045);
+  }
+
+  #resources-page .resource-card .resource-card-icon {
+    transition:
+      transform 280ms ease,
+      background-color 280ms ease,
+      box-shadow 280ms ease;
+  }
+
+  #resources-page .resource-card:hover .resource-card-icon {
+    transform: translateY(-3px) rotate(-4deg);
+    background-color: #e5edff;
+    box-shadow: 0 7px 16px rgba(53, 111, 224, 0.10);
+  }
+
+  #resources-page .resource-card .resource-action {
+    transition:
+      color 220ms ease,
+      gap 220ms ease;
+  }
+
+  #resources-page .resource-card:hover .resource-action {
+    color: #245bd0;
+  }
+
+  #resources-page .resource-card .resource-action svg {
+    transition: transform 220ms ease;
+  }
+
+  #resources-page .resource-card:hover .resource-action svg {
+    transform: translate(3px, -3px);
+  }
+}
+
+#resources-page .resource-card:focus-within {
+  outline: 2px solid rgba(53, 111, 224, 0.65);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #resources-page .resource-card,
+  #resources-page .resource-card .resource-card-icon,
+  #resources-page .resource-card .resource-action,
+  #resources-page .resource-card .resource-action svg {
+    transition: none !important;
+  }
+
+  #resources-page .resource-card:hover,
+  #resources-page .resource-card:hover .resource-card-icon,
+  #resources-page .resource-card:hover .resource-action svg {
+    transform: none;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #resources-page .resource-grid .resource-card:hover {
+    transform: translateY(-6px) !important;
+    border-color: rgba(53, 111, 224, 0.35) !important;
+    box-shadow:
+      0 20px 42px rgba(16, 35, 66, 0.10),
+      0 4px 12px rgba(53, 111, 224, 0.06) !important;
+    transition:
+      transform 280ms ease,
+      border-color 280ms ease,
+      box-shadow 280ms ease !important;
+  }
+
+  #resources-page .resource-grid .resource-card:hover .resource-card-icon {
+    transform: translateY(-3px) rotate(-4deg) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #resources-page .resource-grid .resource-card:hover,
+  #resources-page .resource-grid .resource-card:hover .resource-card-icon {
+    transform: none !important;
+  }
+}
+
+/* ==========================================
+   ASTRATECH — ADMISSIONS STEP INTERACTIONS
+   Scoped exclusively to #admissions-page
+========================================== */
+
+#admissions-page .admission-step {
+  position: relative;
+  border-color: rgba(16, 35, 66, 0.10);
+  transition:
+    transform 280ms ease,
+    border-color 280ms ease,
+    box-shadow 280ms ease,
+    background-color 280ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #admissions-page .admission-step:hover {
+    transform: translateX(6px);
+    border-color: rgba(53, 111, 224, 0.30);
+    box-shadow: 0 12px 28px rgba(16, 35, 66, 0.06);
+    background-color: #fff;
+  }
+
+  #admissions-page .admission-step .admission-step-number {
+    transition:
+      color 260ms ease,
+      background-color 260ms ease,
+      transform 260ms ease,
+      box-shadow 260ms ease;
+  }
+
+  #admissions-page .admission-step:hover .admission-step-number {
+    color: #245bd0;
+    background-color: #e8efff;
+    transform: scale(1.06);
+    box-shadow: 0 5px 14px rgba(53, 111, 224, 0.10);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #admissions-page .admission-step,
+  #admissions-page .admission-step .admission-step-number {
+    transition: none !important;
+  }
+
+  #admissions-page .admission-step:hover,
+  #admissions-page .admission-step:hover .admission-step-number {
+    transform: none;
+  }
+}
+
+/* ==========================================
+   ASTRATECH — ADMISSIONS TIMELINE HOVER
+   Scoped exclusively to #admissions-page
+========================================== */
+
+#admissions-page .admission-timeline .timeline-item {
+  position: relative;
+  border-radius: 12px;
+  transition:
+    transform 280ms ease,
+    border-color 280ms ease,
+    box-shadow 280ms ease,
+    background-color 280ms ease;
+}
+
+#admissions-page .admission-timeline .timeline-item > span {
+  transition:
+    color 260ms ease,
+    background-color 260ms ease,
+    transform 260ms ease,
+    box-shadow 260ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #admissions-page .admission-timeline .timeline-item:hover {
+    transform: translateX(6px);
+    background-color: #fff;
+    box-shadow: 0 10px 26px rgba(16, 35, 66, 0.055);
+  }
+
+  #admissions-page .admission-timeline .timeline-item:hover > span {
+    color: #245bd0;
+    background-color: #e8efff;
+    transform: scale(1.06);
+    box-shadow: 0 5px 14px rgba(53, 111, 224, 0.10);
+  }
+
+  #admissions-page .admission-timeline .timeline-item h3 {
+    transition: color 240ms ease;
+  }
+
+  #admissions-page .admission-timeline .timeline-item:hover h3 {
+    color: #245bd0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #admissions-page .admission-timeline .timeline-item,
+  #admissions-page .admission-timeline .timeline-item > span,
+  #admissions-page .admission-timeline .timeline-item h3 {
+    transition: none !important;
+  }
+
+  #admissions-page .admission-timeline .timeline-item:hover,
+  #admissions-page .admission-timeline .timeline-item:hover > span {
+    transform: none;
+  }
+}
+
+/* ==========================================
+   ASTRATECH — CONTACT DETAIL INTERACTIONS
+   Scoped exclusively to the Contact page
+========================================== */
+
+.contact-layout .contact-detail {
+  position: relative;
+  padding: 12px;
+  margin: 0 -12px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  transition:
+    transform 260ms ease,
+    border-color 260ms ease,
+    background-color 260ms ease,
+    box-shadow 260ms ease;
+}
+
+.contact-layout .contact-detail > svg {
+  flex-shrink: 0;
+  transition:
+    transform 260ms ease,
+    color 260ms ease,
+    background-color 260ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .contact-layout .contact-detail:hover {
+    transform: translateX(5px);
+    border-color: rgba(53, 111, 224, 0.14);
+    background-color: #fff;
+    box-shadow: 0 8px 22px rgba(16, 35, 66, 0.045);
+  }
+
+  .contact-layout .contact-detail:hover > svg {
+    transform: scale(1.08);
+    color: #245bd0;
+  }
+
+  .contact-layout .contact-detail a {
+    transition: color 220ms ease;
+  }
+
+  .contact-layout .contact-detail:hover a {
+    color: #245bd0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-layout .contact-detail,
+  .contact-layout .contact-detail > svg,
+  .contact-layout .contact-detail a {
+    transition: none !important;
+  }
+
+  .contact-layout .contact-detail:hover,
+  .contact-layout .contact-detail:hover > svg {
+    transform: none;
+  }
+}
+
+/* ==========================================
+   ASTRATECH — CONTACT FORM INTERACTIONS
+========================================== */
+
+.contact-form input,
+.contact-form select,
+.contact-form textarea {
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    background-color 220ms ease;
+}
+
+.contact-form input:focus,
+.contact-form select:focus,
+.contact-form textarea:focus {
+  border-color: #356fe0;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(53, 111, 224, 0.10);
+}
+
+.contact-form .submit-btn {
+  transition:
+    transform 240ms ease,
+    box-shadow 240ms ease,
+    background-color 240ms ease;
+}
+
+.contact-form .submit-btn svg {
+  transition: transform 240ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .contact-form .submit-btn:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(16, 35, 66, 0.16);
+  }
+
+  .contact-form .submit-btn:not(:disabled):hover svg {
+    transform: translate(3px, -3px);
+  }
+}
+
+.contact-form .submit-btn:focus-visible {
+  outline: 3px solid rgba(53, 111, 224, 0.55);
+  outline-offset: 4px;
+}
+
+.contact-form .submit-btn:disabled {
+  cursor: wait;
+  opacity: 0.75;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-form input,
+  .contact-form select,
+  .contact-form textarea,
+  .contact-form .submit-btn,
+  .contact-form .submit-btn svg {
+    transition: none !important;
+  }
+
+  .contact-form .submit-btn:hover,
+  .contact-form .submit-btn:hover svg {
+    transform: none;
+  }
+}
+
+/* ==========================================
+   ASTRATECH — HOMEPAGE HORIZONTAL OVERFLOW FIX
+   Scoped exclusively to the homepage
+========================================== */
+
+#root:has(.hero) {
+  overflow-x: clip;
+}
+
+.hero,
+.hero.wrap {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.hero-copy,
+.hero-visual {
+  min-width: 0;
+}
+
+.hero-visual {
+  max-width: 100%;
+}
+
+.hero-photo,
+.float-card {
+  max-width: 100%;
+}
+
+
+/* ==========================================
+   TESTIMONIAL CARDS — ANIMATED TOP LINE
+========================================== */
+
+.testimonial-grid .testimonial::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 20px;
+  right: 20px;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    #356fe0,
+    #9eb9ff,
+    #e9b85d
+  );
+  opacity: 0;
+  transform: scaleX(0.25);
+  transform-origin: left;
+  transition:
+    opacity 260ms ease,
+    transform 360ms ease;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .testimonial-grid .testimonial:hover::before {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-grid .testimonial::before {
+    transition: none;
+  }
+}
+
+
+/* HOMEPAGE — STUDENT STORIES REACTIVE HEADING */
+
+#student-stories .stories-reactive-heading {
+  display: block;
+  margin: 0;
+  color: #10203f;
+  font-family: inherit;
+  font-size: clamp(2.2rem, 3.6vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.055em;
+}
+
+#student-stories .stories-heading-line,
+#student-stories .stories-heading-em {
+  display: block;
+}
+
+#student-stories .stories-heading-em {
+  color: #315fc2;
+  font-style: italic;
+}
+
+#student-stories .stories-reactive-char {
+  display: inline-block;
+  will-change: transform;
+  transform-origin: center;
+}
+
+@media (max-width: 760px) {
+  #student-stories .stories-reactive-heading {
+    font-size: clamp(2rem, 7vw, 2.8rem);
+    line-height: 1.15;
+    letter-spacing: -0.045em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #student-stories .stories-reactive-char {
+    transform: none !important;
+    will-change: auto;
+  }
+}
+
+
+/* RESOURCES PAGE — ANIMATED CARD TOP ACCENT */
+
+#resources-page .resource-card {
+  position: relative;
+  overflow: hidden;
+}
+
+#resources-page .resource-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    #356fe0,
+    #9eb9ff,
+    #e9b85d
+  );
+  opacity: 0;
+  transform: scaleX(0.25);
+  transform-origin: left;
+  transition:
+    opacity 280ms ease,
+    transform 380ms ease;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #resources-page .resource-card:hover::before {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #resources-page .resource-card::before {
+    transition: none;
+  }
+}
