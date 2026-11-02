@@ -94,6 +94,7 @@ export default function EnquiryInbox({ enquiries, loading, onRefresh, onUpdated 
           const validPhone = (phoneHref.match(/\d/g) || []).length >= 7;
           const validEmail = emailPattern.test(enquiry.email || "");
           const isOpen = openId === enquiry._id;
+          const detailsId = `enquiry-details-${String(enquiry._id).replace(/[^a-zA-Z0-9_-]/g, "-")}`;
           return <article className="enquiry-entry enquiry-card" key={enquiry._id}>
             <div className="enquiry-card-header">
               <div><strong>{enquiry.name}</strong><small>{enquiry.course} · {new Date(enquiry.createdAt).toLocaleString()}</small></div>
@@ -104,9 +105,9 @@ export default function EnquiryInbox({ enquiries, loading, onRefresh, onUpdated 
               <span>{enquiry.phone}</span>
               {validPhone && <a href={`tel:${phoneHref}`}><Phone size={14}/> Call</a>}
               {validEmail && <a href={`mailto:${enquiry.email}`}><Mail size={14}/> Email</a>}
-              <button type="button" className="plain-button" onClick={() => isOpen ? setOpenId("") : openDetails(enquiry)}>{isOpen ? "Hide details" : "View details"}</button>
+              <button type="button" className="plain-button" onClick={() => isOpen ? setOpenId("") : openDetails(enquiry)} aria-expanded={isOpen} aria-controls={detailsId}>{isOpen ? "Hide details" : "View details"}</button>
             </div>
-            {isOpen && <div className="enquiry-detail">
+            <div id={detailsId} className="enquiry-detail" hidden={!isOpen}>
               {enquiry.email && <p><strong>Email:</strong> {enquiry.email}</p>}
               <p><strong>Full message:</strong><br/>{enquiry.message || "No message provided."}</p>
               <p><strong>Submitted:</strong> {new Date(enquiry.createdAt).toLocaleString()}</p>
@@ -117,7 +118,7 @@ export default function EnquiryInbox({ enquiries, loading, onRefresh, onUpdated 
               <button type="button" className="btn btn-dark enquiry-save" disabled={saving} onClick={() => save(enquiry)}>{saving ? "Saving…" : "Save enquiry updates"}</button>
               {feedback && <p className="enquiry-feedback" role="status">{feedback}</p>}
               {error && <p className="enquiry-error" role="alert">{error}</p>}
-            </div>}
+            </div>
           </article>;
         })}</div>}
   </section>;

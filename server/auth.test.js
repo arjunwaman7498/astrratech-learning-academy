@@ -18,7 +18,16 @@ process.env.CLOUDINARY_CLOUD_NAME = "astrratech-test";
 process.env.CLOUDINARY_API_KEY = "test-api-key";
 process.env.CLOUDINARY_API_SECRET = "test-api-secret";
 
-const { app, adminAuth, validateAdminConfiguration } = await import("./index.js");
+const {
+  app,
+  adminAuth,
+  createAdminLoginThrottle,
+  createHealthHandlers,
+  getMongoConnectionUri,
+  startServer,
+  validateContentInput,
+  validateAdminConfiguration
+} = await import("./index.js");
 let server;
 let baseUrl;
 const originalUploadStream = cloudinary.uploader.upload_stream;
@@ -111,6 +120,59 @@ test("rejects invalid admin credentials without returning authentication data", 
   assert.equal("token" in body, false);
 });
 
+test("temporarily throttles repeated login failures despite changing forwarded IP headers and recovers after the delay", async () => {
+  let response;
+  for (let attempt = 1; attempt <= 10; attempt += 1) {
+    response = await fetch(`${baseUrl}/api/admin/login`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-forwarded-for": `192.0.2.${attempt}`
+      },
+      body: JSON.stringify({ email: adminEmail, password: "incorrect" })
+    });
+    if (response.status === 429) break;
+    assert.equal(response.status, 401);
+  }
+
+  assert.equal(response.status, 429);
+  assert.ok(Number(response.headers.get("retry-after")) > 0);
+
+  await new Promise(resolve => setTimeout(resolve, Number(response.headers.get("retry-after")) * 1000 + 50));
+  response = await fetch(`${baseUrl}/api/admin/login`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ email: adminEmail, password: adminPassword })
+  });
+  assert.equal(response.status, 200);
+  assert.equal(typeof (await response.json()).token, "string");
+});
+
+test("applies progressive account throttling across IPs and clears state after successful authentication", () => {
+  let currentTime = 1000;
+  const throttle = createAdminLoginThrottle({
+    now: () => currentTime,
+    failureThreshold: 2,
+    baseDelayMs: 100,
+    maxDelayMs: 800,
+    keySecret: "test-only-throttle-key"
+  });
+
+  throttle.failed("ip-one", "admin@example.test");
+  assert.equal(throttle.check("ip-two", "admin@example.test"), 0);
+  throttle.failed("ip-two", "admin@example.test");
+  assert.equal(throttle.check("ip-three", "admin@example.test"), 100);
+
+  currentTime += 100;
+  assert.equal(throttle.check("ip-three", "admin@example.test"), 0);
+  throttle.failed("ip-three", "admin@example.test");
+  assert.equal(throttle.check("ip-four", "admin@example.test"), 200);
+
+  currentTime += 200;
+  throttle.succeeded("ip-four", "admin@example.test");
+  assert.equal(throttle.check("ip-one", "admin@example.test"), 0);
+});
+
 test("rejects expired tokens on protected admin routes", async () => {
   const expiredToken = jwt.sign({ role: "admin" }, jwtSecret, { expiresIn: -1 });
   const response = await runAdminAuth(`Bearer ${expiredToken}`);
@@ -141,6 +203,8 @@ test("protects every admin API route against missing, invalid, expired, and non-
   ];
   const routes = [
     ["GET", "/api/admin/enquiries"],
+    ["GET", "/api/admin/courses"],
+    ["GET", "/api/admin/resources"],
     ["PUT", "/api/admin/enquiries/test-id"],
     ["POST", "/api/admin/images"],
     ["POST", "/api/admin/courses"],
@@ -174,6 +238,126 @@ test("requires bcrypt credentials and a strong JWT secret in configuration", () 
     "ADMIN_PASSWORD_HASH must be a bcrypt hash with a cost of at least 10.",
     "JWT_SECRET must be at least 32 characters."
   ]);
+});
+
+test("validates publication flags and resource download URLs", () => {
+  assert.equal(validateContentInput("courses", { sample: false }), null);
+  assert.equal(validateContentInput("courses", { sample: "false" }), "Sample visibility must be a boolean.");
+  assert.equal(validateContentInput("resources", { downloadUrl: "https://cdn.example.test/guide.pdf" }), null);
+  assert.equal(validateContentInput("resources", { downloadUrl: "/files/guide.pdf" }), null);
+  assert.equal(validateContentInput("resources", { downloadUrl: "http://cdn.example.test/guide.pdf" }), "Resource URL must be HTTPS or a site-relative path.");
+  assert.equal(validateContentInput("resources", { downloadUrl: "//outside.example.test/file.pdf" }), "Resource URL must be HTTPS or a site-relative path.");
+});
+
+test("requires MONGODB_URI in production while retaining the local development fallback", async () => {
+  assert.throws(
+    () => getMongoConnectionUri({ NODE_ENV: "production" }),
+    /MONGODB_URI is required when NODE_ENV=production/
+  );
+  await assert.rejects(startServer({
+    env: { NODE_ENV: "production" },
+    connect: async () => assert.fail("production startup must validate MONGODB_URI before connecting"),
+    listen: async () => assert.fail("production startup must not listen without MONGODB_URI")
+  }), /MONGODB_URI is required when NODE_ENV=production/);
+  assert.equal(getMongoConnectionUri({ NODE_ENV: "development" }), "mongodb://127.0.0.1:27017/astratech_academy");
+  assert.equal(getMongoConnectionUri({ NODE_ENV: "production", MONGODB_URI: " mongodb+srv://db.example/academy " }), "mongodb+srv://db.example/academy");
+});
+
+test("connects to MongoDB before accepting requests without inserting demo records", async () => {
+  const steps = [];
+  const server = { listening: true };
+  const started = await startServer({
+    env: { NODE_ENV: "production", MONGODB_URI: "mongodb://database.test/academy", PORT: "4100" },
+    connect: async (uri, options) => {
+      steps.push("connect");
+      assert.equal(uri, "mongodb://database.test/academy");
+      assert.equal(options.serverSelectionTimeoutMS, 10000);
+      assert.equal(options.connectTimeoutMS, 10000);
+    },
+    listen: async port => {
+      steps.push("listen");
+      assert.equal(port, 4100);
+      return server;
+    },
+    disconnect: async () => steps.push("disconnect")
+  });
+
+  assert.equal(started, server);
+  assert.deepEqual(steps, ["connect", "listen"]);
+});
+
+test("does not listen after production database connection failure", async () => {
+  const steps = [];
+  await assert.rejects(startServer({
+    env: { NODE_ENV: "production", MONGODB_URI: "mongodb://database.test/academy" },
+    connect: async () => {
+      steps.push("connect");
+      throw new Error("database credentials must not be logged");
+    },
+    listen: async () => steps.push("listen"),
+    disconnect: async () => steps.push("disconnect")
+  }), /database credentials must not be logged/);
+  assert.deepEqual(steps, ["connect", "disconnect"]);
+});
+
+test("readiness requires a working database ping while liveness remains available", async () => {
+  let pingWorks = true;
+  const connection = {
+    readyState: 0,
+    db: {
+      async command(command, options) {
+        assert.deepEqual(command, { ping: 1 });
+        assert.equal(options.maxTimeMS, 2000);
+        if (!pingWorks) throw new Error("database unavailable");
+      }
+    }
+  };
+  const handlers = createHealthHandlers(connection);
+  async function invoke(handler) {
+    const response = {
+      statusCode: 200,
+      body: null,
+      status(code) {
+        this.statusCode = code;
+        return this;
+      },
+      json(body) {
+        this.body = body;
+        return this;
+      }
+    };
+    await handler({}, response);
+    return response;
+  }
+
+  assert.deepEqual(await invoke(handlers.readiness).then(({ statusCode, body }) => ({ statusCode, body })), {
+    statusCode: 503,
+    body: { status: "unavailable", database: "disconnected" }
+  });
+  assert.deepEqual(await invoke(handlers.liveness).then(({ statusCode, body }) => ({ statusCode, body })), {
+    statusCode: 200,
+    body: { status: "ok" }
+  });
+
+  connection.readyState = 1;
+  assert.equal((await invoke(handlers.readiness)).statusCode, 200);
+  pingWorks = false;
+  assert.equal((await invoke(handlers.readiness)).statusCode, 503);
+  pingWorks = true;
+  assert.equal((await invoke(handlers.readiness)).statusCode, 200);
+});
+
+test("health endpoints report disconnected readiness independently of liveness", async () => {
+  const [readiness, liveness, health] = await Promise.all([
+    fetch(`${baseUrl}/api/ready`),
+    fetch(`${baseUrl}/api/live`),
+    fetch(`${baseUrl}/api/health`)
+  ]);
+  assert.equal(readiness.status, 503);
+  assert.deepEqual(await readiness.json(), { status: "unavailable", database: "disconnected" });
+  assert.equal(liveness.status, 200);
+  assert.deepEqual(await liveness.json(), { status: "ok" });
+  assert.equal(health.status, 503);
 });
 
 test("requires admin authentication before accepting image uploads", async () => {
@@ -234,9 +418,12 @@ test("persists Cloudinary URLs on create, edit, removal, and public content refr
   let storedFaculty;
   Faculty.create = async item => (storedFaculty = { ...item, _id: "faculty-cloudinary-test" });
   Faculty.findByIdAndUpdate = async (_id, update) => (storedFaculty = { ...storedFaculty, ...update });
-  Faculty.find = () => ({
+  Faculty.find = filter => ({
     sort: () => ({
-      lean: async () => [storedFaculty]
+      lean: async () => {
+        const records = [storedFaculty, { _id: "faculty-private-sample", name: "Private sample", sample: true }];
+        return filter?.sample ? records.filter(record => record.sample !== true) : records;
+      }
     })
   });
 
@@ -259,7 +446,17 @@ test("persists Cloudinary URLs on create, edit, removal, and public content refr
       })
     });
     assert.equal(createdResponse.status, 201);
-    assert.equal((await createdResponse.json()).image, initialImage);
+    const createdFaculty = await createdResponse.json();
+    assert.equal(createdFaculty.image, initialImage);
+    assert.equal(createdFaculty.sample, false);
+
+    const unauthorizedRead = await fetch(`${baseUrl}/api/admin/faculty`);
+    assert.equal(unauthorizedRead.status, 401);
+    const adminRead = await fetch(`${baseUrl}/api/admin/faculty`, {
+      headers: { authorization: `Bearer ${token}` }
+    });
+    assert.equal(adminRead.status, 200);
+    assert.equal((await adminRead.json()).length, 2);
 
     const replacementUpload = await uploadImage(png);
     const replacementImage = (await replacementUpload.json()).image;
@@ -273,7 +470,9 @@ test("persists Cloudinary URLs on create, edit, removal, and public content refr
 
     const refreshedResponse = await fetch(`${baseUrl}/api/content/faculty`);
     assert.equal(refreshedResponse.status, 200);
-    assert.equal((await refreshedResponse.json())[0].image, replacementImage);
+    const publicFaculty = await refreshedResponse.json();
+    assert.equal(publicFaculty.length, 1);
+    assert.equal(publicFaculty[0].image, replacementImage);
 
     const removedResponse = await fetch(`${baseUrl}/api/admin/faculty/faculty-cloudinary-test`, {
       method: "PUT",

@@ -29,7 +29,7 @@ export function isKnownAdminPath(pathname) {
 export function getAdminDataPath(section) {
   if (section === "enquiries") return "/admin/enquiries";
   if (section === "contact") return "/content/contact";
-  if (ADMIN_OVERVIEW_SECTIONS.includes(section)) return `/content/${section}`;
+  if (ADMIN_OVERVIEW_SECTIONS.includes(section)) return `/admin/${section}`;
   throw new Error(`Unsupported admin data section: ${section}`);
 }
 
@@ -88,6 +88,7 @@ export function replaceAdminRecord(records, updatedRecord) {
 
 export function buildAdminEditForm(section, item, currentForm) {
   return Object.fromEntries(Object.keys(currentForm).map(key => {
+    if (key === "sample") return [key, item.sample === true];
     if (key === "name" && ["results", "testimonials"].includes(section)) {
       return [key, item.name ?? item.title ?? ""];
     }

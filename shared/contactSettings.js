@@ -1,10 +1,10 @@
 export const DEFAULT_CONTACT_SETTINGS = {
-  heading: "We’re here to help you begin.",
-  description: "Share a few details and a course you’re interested in. The current contact details below are placeholders.",
-  phone: "+91 00000 00000",
-  email: "hello@example.com",
-  address: "Sample address, Pune, India",
-  officeHours: "Monday–Saturday, 9:00 AM–6:00 PM",
+  heading: "Get in touch",
+  description: "Send us an enquiry to learn more about our programmes.",
+  phone: "",
+  email: "",
+  address: "",
+  officeHours: "",
   mapUrl: ""
 };
 
@@ -35,8 +35,8 @@ export function validateContactSettings(settings) {
       (values.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email))) {
     throw new Error("Enter a valid email address of at most 160 characters.");
   }
-  if (!values.address || values.address.length > 300) {
-    throw new Error("Address is required and must be at most 300 characters.");
+  if (values.address.length > 300) {
+    throw new Error("Address must be at most 300 characters.");
   }
   if (values.officeHours.length > 200) {
     throw new Error("Office hours must be at most 200 characters.");

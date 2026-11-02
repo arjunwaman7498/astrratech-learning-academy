@@ -62,7 +62,7 @@ export default function ContactSettingsEditor({ contact, loading, loaded, loadEr
                 onChange={event => update("email", event.target.value)}/>
             </label>
           </div>
-          <label>Full address *
+          <label>Full address
             <textarea required rows="2" maxLength="300" value={form.address || ""}
               onChange={event => update("address", event.target.value)}/>
           </label>

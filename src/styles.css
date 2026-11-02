@@ -1,10 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 :root {
     font-family:"DM Sans",sans-serif;
     color:#17263f;
     background:#fff;
     --ink:#14233b;
-    --muted:#687386;
+    --muted:#626d7f;
     --line:#e7e2d9;
     --cream:#f8f5ef;
     --green:#e9b45f;
@@ -42,6 +41,11 @@ button,input,textarea,select {
 
 button {
     cursor:pointer
+}
+
+:focus-visible {
+    outline:3px solid #315fc2;
+    outline-offset:3px
 }
 
 h1,h2,h3,h4 {
@@ -85,7 +89,7 @@ p {
     gap:16px;
     background:var(--deep2);
     color:#d8e4dc;
-    font-size:10px;
+    font-size:12px;
     letter-spacing:.04em
 }
 
@@ -139,14 +143,16 @@ p {
 
 .brand-name {
     font:800 19px/1 Manrope;
-    letter-spacing:-.075em
+    letter-spacing:-.075em;
+    text-transform:capitalize
 }
 
 .brand-name small {
     display:block;
     font:700 8px "DM Sans";
     letter-spacing:.3em;
-    margin-top:5px
+    margin-top:5px;
+    text-transform:uppercase
 }
 
 .nav {
@@ -530,9 +536,9 @@ p {
 
 .section-heading>p {
     max-width:390px;
-    font-size:12px;
+    font-size:14px;
     color:var(--muted);
-    line-height:1.95;
+    line-height:1.75;
     margin:0 0 3px
 }
 
@@ -614,10 +620,10 @@ p {
 }
 
 .approach-point p {
-    font-size:11px;
+    font-size:14px;
     color:var(--muted);
     margin:0;
-    line-height:1.8
+    line-height:1.7
 }
 
 .approach-point>svg {
@@ -688,10 +694,10 @@ p {
 }
 
 .course-card>p {
-    font-size:11px;
+    font-size:14px;
     color:var(--muted);
-    line-height:1.85;
-    margin-bottom:24px
+    line-height:1.7;
+    margin-bottom:20px
 }
 
 .course-bottom {
@@ -787,9 +793,9 @@ p {
 }
 
 .faculty-desc {
-    font-size:10px;
+    font-size:13px;
     color:var(--muted);
-    line-height:1.8;
+    line-height:1.7;
     margin:12px 0 0
 }
 
@@ -959,7 +965,7 @@ p {
 }
 
 .notice-row p {
-    font-size:10px;
+    font-size:13px;
     color:var(--muted);
     margin:0
 }
@@ -981,7 +987,7 @@ p {
 }
 
 .admission-preview>div:first-child>p {
-    font-size:12px;
+    font-size:14px;
     color:var(--muted);
     max-width:370px;
     margin:20px 0 25px
@@ -1143,9 +1149,9 @@ p {
 
 .page-hero>div>p {
     max-width:620px;
-    font-size:13px;
+    font-size:15px;
     color:var(--muted);
-    line-height:1.95;
+    line-height:1.75;
     margin:0
 }
 
@@ -1164,9 +1170,9 @@ p {
 }
 
 .body-copy {
-    font-size:12px;
+    font-size:14px;
     color:var(--muted);
-    line-height:2
+    line-height:1.8
 }
 
 .value-list {
@@ -1179,7 +1185,7 @@ p {
     display:flex;
     align-items:center;
     gap:10px;
-    font-size:11px;
+    font-size:13px;
     margin:0
 }
 
@@ -1211,9 +1217,9 @@ p {
 }
 
 .value-card p {
-    font-size:10px;
+    font-size:13px;
     color:var(--muted);
-    line-height:1.8;
+    line-height:1.7;
     margin:0
 }
 
@@ -1245,7 +1251,7 @@ p {
 }
 
 .inline-callout p {
-    font-size:10px;
+    font-size:13px;
     color:var(--muted);
     margin:4px 0 0
 }
@@ -1270,7 +1276,7 @@ p {
 }
 
 .results-note p {
-    font-size:11px;
+    font-size:13px;
     margin:0
 }
 
@@ -1305,7 +1311,7 @@ p {
 }
 
 .result-card p {
-    font-size:10px;
+    font-size:13px;
     color:#65806c;
     margin:0
 }
@@ -1313,7 +1319,8 @@ p {
 .result-card small {
     display:block;
     color:var(--muted);
-    font-size:9px;
+    font-size:13px;
+    line-height:1.65;
     margin-top:15px
 }
 
@@ -1338,8 +1345,9 @@ p {
 }
 
 .achievement-panel p {
-    font-size:10px;
+    font-size:14px;
     color:#d0daec;
+    line-height:1.7;
     margin:0
 }
 
@@ -1378,9 +1386,10 @@ p {
 }
 
 .timeline-item p {
-    font-size:11px;
+    font-size:14px;
     color:var(--muted);
     max-width:580px;
+    line-height:1.7;
     margin:0
 }
 
@@ -1422,9 +1431,9 @@ p {
 }
 
 .resource-card p {
-    font-size:10px;
+    font-size:14px;
     color:var(--muted);
-    line-height:1.8
+    line-height:1.7
 }
 
 .resource-action {
@@ -1532,9 +1541,9 @@ p {
 }
 
 .faq-list details p {
-    font-size:11px;
+    font-size:14px;
     color:var(--muted);
-    line-height:1.8;
+    line-height:1.7;
     margin:14px 25px 0 0
 }
 
@@ -1581,7 +1590,7 @@ p {
 }
 
 .contact-detail strong {
-    font-size:11px;
+    font-size:13px;
     margin-top:4px
 }
 
@@ -1644,6 +1653,10 @@ p {
     margin-bottom:15px
 }
 
+.contact-form label {
+    font-size:12px;
+}
+
 .contact-form input,.contact-form select,.contact-form textarea,.admin-login-card input,.admin-content-form input,.admin-content-form textarea,.admin-content-form select {
     display:block;
     width:100%;
@@ -1657,9 +1670,19 @@ p {
     color:var(--ink)
 }
 
+.contact-form input,.contact-form select,.contact-form textarea {
+    font-size:14px;
+}
+
 .contact-form input:focus,.contact-form select:focus,.contact-form textarea:focus,.admin-login-card input:focus,.admin-content-form input:focus,.admin-content-form textarea:focus {
     border-color:#3d6fd6;
     box-shadow:0 0 0 3px #3d6fd620
+}
+
+.contact-form input:focus-visible,.contact-form select:focus-visible,.contact-form textarea:focus-visible,.admin-login-card input:focus-visible,.admin-content-form input:focus-visible,.admin-content-form textarea:focus-visible,.admin-content-form select:focus-visible {
+    outline:3px solid #315fc2;
+    outline-offset:2px;
+    box-shadow:none
 }
 
 .form-two {
@@ -1911,7 +1934,7 @@ p {
 }
 
 .admin-content-form label {
-    font-size:9px
+    font-size:12px
 }
 
 .admin-content-form .form-two {
@@ -1970,11 +1993,11 @@ p {
 }
 
 .admin-entry-copy strong {
-    font-size:10px
+    font-size:12px
 }
 
 .admin-entry-copy small {
-    font-size:8px;
+    font-size:10px;
     color:var(--muted);
     margin-top:4px
 }
@@ -1999,6 +2022,34 @@ p {
     font-size:11px;
     color:var(--muted);
     padding:20px 0
+}
+
+.public-empty-state {
+    grid-column:1/-1;
+    color:var(--muted);
+    font-size:14px;
+    margin:10px 0;
+    line-height:1.7
+}
+
+.content-load-alert {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:12px;
+    padding:10px 5%;
+    background:#fff0e9;
+    color:#8f5c28;
+    font-size:13px
+}
+
+.content-load-alert button {
+    border:0;
+    background:transparent;
+    color:inherit;
+    font:inherit;
+    font-weight:700;
+    text-decoration:underline
 }
 
 .admin-alert {
@@ -2332,7 +2383,7 @@ p {
         gap:10px
     }
     .notice-row p {
-        font-size:9px
+        font-size:13px
     }
     .value-grid {
         gap:10px
@@ -2341,7 +2392,27 @@ p {
         padding:17px
     }
     .admin-sidebar {
-        grid-template-columns:1fr 1fr
+        grid-template-columns:1fr 1fr;
+        gap:4px;
+        padding:16px 12px
+    }
+    .admin-sidebar .brand {
+        margin:0 6px 8px
+    }
+    .admin-label {
+        margin:2px 0 4px
+    }
+    .admin-nav {
+        min-height:40px;
+        padding:8px 10px
+    }
+    .admin-sidebar-bottom {
+        gap:8px;
+        margin-top:6px;
+        padding:10px 8px 2px
+    }
+    .admin-sidebar-bottom a,.admin-sidebar-bottom button {
+        min-height:40px
     }
     .admin-topbar {
         align-items:flex-start;

@@ -12,45 +12,12 @@ import { DEFAULT_CONTACT_SETTINGS } from "../shared/contactSettings";
 import PublicCursor from "./PublicCursor";
 import "./publicCursor.css";
 
-const demo = {
- courses: [
-  { _id:"d1",title:"Foundation Programme",category:"FOUNDATION",duration:"12 weeks",icon:"✳",description:"Build confidence in essential concepts with guided lessons, deliberate practice and structured revision.",featured:true },
-  { _id:"d2",title:"Mathematics Mastery",category:"SUBJECT SUPPORT",duration:"10 weeks",icon:"∑",description:"Strengthen problem-solving skills and develop a clear approach to core mathematics topics.",featured:true },
-  { _id:"d3",title:"Science Explorers",category:"SUBJECT SUPPORT",duration:"12 weeks",icon:"⚗",description:"Connect scientific concepts with practical examples, clear explanations and active learning.",featured:true },
-  { _id:"d4",title:"Exam Preparation",category:"EXAM READINESS",duration:"16 weeks",icon:"◎",description:"Plan revision, practise question patterns and build a steady exam preparation routine.",featured:true },
-  { _id:"d5",title:"English & Communication",category:"SKILL BUILDING",duration:"8 weeks",icon:"Aa",description:"Improve reading, writing, grammar and communication through structured practice." },
-  { _id:"d6",title:"Personal Learning Support",category:"GUIDED LEARNING",duration:"Flexible",icon:"↗",description:"A supportive learning path shaped around individual goals and areas for improvement." }
- ],
- faculty:[
-  {_id:"f1",name:"Dr. Aanya Mehta",role:"Mathematics Mentor",qualification:"M.Sc. Mathematics · 8 years",image:"https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=800&q=85",description:"Makes challenging ideas approachable through clear explanations and practice."},
-  {_id:"f2",name:"Rohan Kulkarni",role:"Science Educator",qualification:"M.Sc. Physics · 7 years",image:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=85",description:"Connects classroom concepts to practical examples and curiosity-led learning."},
-  {_id:"f3",name:"Neha Sharma",role:"Language Coach",qualification:"M.A. English · 6 years",image:"https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=85",description:"Helps learners communicate with clarity, confidence and purpose."}
- ],
- results:[
-  {_id:"r1",name:"Sample learner A",role:"Foundation programme",year:"2026",score:"92%",description:"Illustrative result for design preview only."},
-  {_id:"r2",name:"Sample learner B",role:"Mathematics mastery",year:"2026",score:"88%",description:"Illustrative result for design preview only."},
-  {_id:"r3",name:"Sample learner C",role:"Exam preparation",year:"2026",score:"95%",description:"Illustrative result for design preview only."}
- ],
- testimonials:[
-  {_id:"t1",name:"Aarav M.",role:"Sample student",quote:"The structured lessons helped me break a big goal into smaller, manageable steps."},
-  {_id:"t2",name:"Sana K.",role:"Sample student",quote:"I felt comfortable asking questions and could see where I needed more practice."},
-  {_id:"t3",name:"Riya V.",role:"Sample student",quote:"The learning plan gave me more confidence and helped me stay consistent."}
- ],
- notices:[
-  {_id:"n1",title:"Sample admissions are open",category:"Admissions",type:"Notice",date:"Demo notice",description:"Contact our team to discuss sample course options for the upcoming academic session."},
-  {_id:"n2",title:"Weekly study planner",category:"Student support",type:"Resource",date:"Demo resource",description:"A sample planning guide to help learners organise weekly study goals."},
-  {_id:"n3",title:"Welcome orientation",category:"Community",type:"Event",date:"Demo event",description:"A placeholder event notice. Replace with an approved date before publishing."}
- ],
- resources:[
-  {_id:"s1",title:"A calmer study week",category:"Study guide",type:"Sample resource",description:"A demo study-planning resource. Replace with a real approved download before launch."},
-  {_id:"s2",title:"Getting ready for assessments",category:"Checklist",type:"Checklist",description:"A sample checklist for preparing materials, setting goals and planning revision."},
-  {_id:"s3",title:"How to ask better questions",category:"Learning tips",type:"Article",description:"A short sample article about curiosity, note-taking and asking for help."}
- ]
-};
+const emptyContent = { courses:[], faculty:[], results:[], testimonials:[], notices:[], resources:[] };
 const fadeUp = { hidden:{opacity:0,y:22}, show:{opacity:1,y:0,transition:{duration:.55,ease:[.22,1,.36,1]}} };
 function Reveal({children,className="",delay=0}){const reduce=useReducedMotion();return <motion.div className={className} variants={fadeUp} initial={reduce?"show":"hidden"} whileInView="show" viewport={{once:true,amount:.12}} transition={{delay}}>{children}</motion.div>}
-function useContent(){const [content,setContent]=useState({...demo,contact:DEFAULT_CONTACT_SETTINGS});const [loading,setLoading]=useState(true);const refresh=async()=>{const keys=["courses","faculty","results","testimonials","notices","resources"];const results=await Promise.all(keys.map(async key=>{try{const data=await api(`/content/${key}`);return [key,data.length?data:demo[key]]}catch{return [key,demo[key]]}}));let contact=DEFAULT_CONTACT_SETTINGS;try{contact={...DEFAULT_CONTACT_SETTINGS,...await api("/content/contact")}}catch{}setContent({...Object.fromEntries(results),contact});setLoading(false)};useEffect(()=>{const handleContentChange=()=>{refresh()};window.addEventListener("astratech:content-changed",handleContentChange);refresh();return()=>window.removeEventListener("astratech:content-changed",handleContentChange)},[]);return {content,refresh,loading};}
-function Header(){const [open,setOpen]=useState(false);const loc=useLocation();useEffect(()=>setOpen(false),[loc.pathname]);const links=[["About","/about"],["Courses","/courses"],["Faculty","/faculty"],["Results","/results"],["Resources","/resources"]];return <><div className="topline">Learn Today. Lead Tomorrow. <span>Admissions enquiries welcome <ArrowUpRight size={12}/></span></div><header className="header"><Link className="brand" to="/"><span className="brand-icon">A<span>✦</span></span><span className="brand-name">astrratech<small>LEARNING ACADEMY</small></span></Link><nav className={open?"nav nav-open":"nav"}>{links.map(([label,path])=><NavLink key={path} to={path}>{label}</NavLink>)}<Link to="/admissions">Admissions</Link><Link to="/contact">Contact</Link></nav><Link className="btn btn-dark header-btn" to="/contact">Enquire now <ArrowUpRight size={15}/></Link><button className="mobile-toggle" onClick={()=>setOpen(!open)} aria-label="Toggle menu">{open?<X/>:<Menu/>}</button></header></>}
+function useContent(){const [content,setContent]=useState({...emptyContent,contact:DEFAULT_CONTACT_SETTINGS});const [errors,setErrors]=useState({});const [loading,setLoading]=useState(true);const refresh=async()=>{setLoading(true);const keys=Object.keys(emptyContent);const failures={};const results=await Promise.all(keys.map(async key=>{try{const data=await api(`/content/${key}`);if(!Array.isArray(data))throw new Error("Invalid content response.");return [key,data]}catch{failures[key]=true;return [key,[]]}}));let contact=DEFAULT_CONTACT_SETTINGS;try{const settings=await api("/content/contact");if(!settings||typeof settings!=="object"||Array.isArray(settings))throw new Error("Invalid contact settings response.");contact={...DEFAULT_CONTACT_SETTINGS,...settings}}catch{failures.contact=true}setContent({...Object.fromEntries(results),contact});setErrors(failures);setLoading(false)};useEffect(()=>{const handleContentChange=()=>{refresh()};window.addEventListener("astratech:content-changed",handleContentChange);refresh();return()=>window.removeEventListener("astratech:content-changed",handleContentChange)},[]);return {content,refresh,loading,errors};}
+function CollectionState({items,loading,error,label}){if(items.length)return null;const text=label[0].toUpperCase()+label.slice(1);const message=loading?`Loading ${label}…`:error?`${text} could not be loaded.`:`${text} will be listed here when available.`;return <p className="public-empty-state" role={loading?"status":error?"alert":undefined}>{message}</p>}
+function Header(){const [open,setOpen]=useState(false);const toggleRef=useRef(null);const loc=useLocation();useEffect(()=>setOpen(false),[loc.pathname]);useEffect(()=>{if(!open)return;function handleKeyDown(event){if(event.key==="Escape"){setOpen(false);toggleRef.current?.focus()}}window.addEventListener("keydown",handleKeyDown);return()=>window.removeEventListener("keydown",handleKeyDown)},[open]);const links=[["About","/about"],["Courses","/courses"],["Faculty","/faculty"],["Results","/results"],["Resources","/resources"]];return <><div className="topline">Learn Today. Lead Tomorrow. <span>Admissions enquiries welcome <ArrowUpRight size={12}/></span></div><header className="header"><Link className="brand" to="/"><span className="brand-icon">A<span>✦</span></span><span className="brand-name">Astrratech<small>LEARNING ACADEMY</small></span></Link><nav id="primary-navigation" className={open?"nav nav-open":"nav"}>{links.map(([label,path])=><NavLink key={path} to={path}>{label}</NavLink>)}<Link to="/admissions">Admissions</Link><Link to="/contact">Contact</Link></nav><Link className="btn btn-dark header-btn" to="/contact">Enquire now <ArrowUpRight size={15}/></Link><button ref={toggleRef} type="button" className="mobile-toggle" onClick={()=>setOpen(!open)} aria-label="Toggle menu" aria-expanded={open} aria-controls="primary-navigation">{open?<X/>:<Menu/>}</button></header></>}
 
 function Footer({ contact = DEFAULT_CONTACT_SETTINGS }) {
   return (
@@ -63,7 +30,7 @@ function Footer({ contact = DEFAULT_CONTACT_SETTINGS }) {
               A<span>&#10022;</span>
             </span>
             <span className="brand-name">
-              astrratech
+              Astrratech
               <small>LEARNING ACADEMY</small>
             </span>
           </Link>
@@ -97,20 +64,21 @@ function Footer({ contact = DEFAULT_CONTACT_SETTINGS }) {
         <div className="footer-contact-column">
           <h4>Get in touch</h4>
 
-          <a href={`mailto:${contact.email}`}>
+          {contact.email&&<a href={`mailto:${contact.email}`}>
             <Mail size={15} aria-hidden="true" />
             <span>{contact.email}</span>
-          </a>
+          </a>}
 
-          <a href={`tel:${contact.phone.replace(/[^+\d]/g, "")}`}>
+          {contact.phone&&<a href={`tel:${contact.phone.replace(/[^+\d]/g, "")}`}>
             <Phone size={15} aria-hidden="true" />
             <span>{contact.phone}</span>
-          </a>
+          </a>}
 
-          <span className="footer-address">
+          {contact.address&&<span className="footer-address">
             <MapPin size={15} aria-hidden="true" />
             <span>{contact.address}</span>
-          </span>
+          </span>}
+          {!contact.email&&!contact.phone&&!contact.address&&<span>Contact details will be updated soon.</span>}
         </div>
       </div>
 
@@ -137,12 +105,110 @@ function Footer({ contact = DEFAULT_CONTACT_SETTINGS }) {
   );
 }
 
-function SectionHeading({eyebrow,title,copy}){return <div className="section-heading"><div><div className="eyebrow"><span/> {eyebrow}</div><h2>{title}</h2></div>{copy&&<p>{copy}</p>}</div>}
+function SectionHeading({eyebrow,title,copy}){return <div className="section-heading"><div><div className="eyebrow"><span/> {eyebrow}</div>{title}</div>{copy&&<p>{copy}</p>}</div>}
 function ButtonLink({to,children,light=false}){return <Link className={`btn ${light?"btn-light":"btn-dark"}`} to={to}>{children}<ArrowUpRight size={16}/></Link>}
 function courseSlug(course){return String(course.slug||course._id||course.title).trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
 function coursePath(course){return `/courses/${encodeURIComponent(course.slug?courseSlug(course):course._id||courseSlug(course))}`}
 function resourcePath(resource){return `/resources/${encodeURIComponent(resource._id||courseSlug(resource))}`}
 function findByIdOrSlug(items,id){const normalized=id.toLowerCase();return items.find(item=>String(item._id||"").toLowerCase()===normalized||String(item.slug||"").toLowerCase()===normalized||courseSlug(item)===normalized)}
+const SEO_SITE_URL="https://astrratech-learning-academy-frontend.onrender.com";
+const SEO_SOCIAL_IMAGE="https://images.unsplash.com/photo-1529390079861-591de354faf5?auto=format&fit=crop&w=1200&q=85";
+const SEO_ROUTES={
+ "/":{title:"Learn Today. Lead Tomorrow.",description:"Discover courses, supportive educators and learning resources at Astrratech Learning Academy. Learn today. Lead tomorrow."},
+ "/about":{title:"About Us",description:"Learn about Astrratech Learning Academy’s thoughtful approach to learning, personal guidance and strong foundations."},
+ "/courses":{title:"Courses",description:"Explore learning programmes designed to strengthen understanding, build confidence and help students take their next step."},
+ "/faculty":{title:"Faculty",description:"Meet the educators who make learning clearer, encourage curiosity and support students as they grow."},
+ "/results":{title:"Results and Achievements",description:"Explore the learner results and achievements featured on Astrratech Learning Academy’s results page."},
+ "/testimonials":{title:"Student Stories",description:"Read the learner stories and experiences featured on Astrratech Learning Academy’s testimonials page."},
+ "/resources":{title:"Learning Resources",description:"Explore study guides, revision checklists and learning tips in Astrratech Learning Academy’s learning library."},
+ "/notices":{title:"News and Notices",description:"Browse academy announcements, upcoming events and useful learning resources."},
+ "/admissions":{title:"Admissions",description:"Learn about the admissions process and how to explore course options at Astrratech Learning Academy."},
+ "/contact":{title:"Contact Us",description:"Contact Astrratech Learning Academy with questions about programmes, admissions or your learning goals."},
+ "/careers":{title:"Careers",description:"Find career information and ways to express interest in future opportunities with Astrratech Learning Academy."},
+ "/faq":{title:"Frequently Asked Questions",description:"Find answers about courses, admissions, learning resources and getting in touch with Astrratech Learning Academy."},
+ "/privacy":{title:"Privacy Policy",description:"Read how Astrratech Learning Academy uses information shared through enquiries and how to contact the academy about your details."},
+ "/terms":{title:"Terms and Admission Information",description:"Review information about programmes, admissions, fees and related policies before enrolling."}
+};
+function PageMetadata({content,loading}){
+ const {pathname}=useLocation();
+ useEffect(()=>{
+  const path=pathname.replace(/\/+$/,"")||"/";
+  let metadata=SEO_ROUTES[path];
+  let canonicalPath=path;
+  let robots="index,follow";
+  if(path==="/staff-access"||path.startsWith("/staff-access/")||path==="/admin"||path.startsWith("/admin/")){
+   metadata={title:"Administrator Access",description:"Sign in to the Astrratech Learning Academy content management workspace."};
+   robots="noindex,nofollow";
+   canonicalPath=null;
+  }else if(path.startsWith("/courses/")){
+   const courseId=path.slice("/courses/".length);
+   let decodedId="";
+   try{decodedId=decodeURIComponent(courseId)}catch{}
+   const course=content.courses.find(item=>String(item._id||"").toLowerCase()===decodedId.toLowerCase()||String(item.slug||"").toLowerCase()===decodedId.toLowerCase()||courseSlug(item)===decodedId.toLowerCase());
+   if(course){
+    metadata={title:`${course.title} Course`,description:`Learn about ${course.title}, including the course description, category and duration.`};
+   }else{
+    metadata=loading?{title:"Course Details",description:"Course details are loading from Astrratech Learning Academy."}:{title:"Page Not Found",description:"The course you’re looking for isn’t available. Browse current courses at Astrratech Learning Academy."};
+    robots="noindex,follow";
+    canonicalPath=null;
+   }
+  }else if(path.startsWith("/resources/")){
+   const resourceId=path.slice("/resources/".length);
+   let decodedId="";
+   try{decodedId=decodeURIComponent(resourceId)}catch{}
+   const resource=findByIdOrSlug(content.resources,decodedId);
+   if(resource){
+    metadata={title:`${resource.title} Resource`,description:`View details for ${resource.title}, including its description and access options.`};
+   }else{
+    metadata=loading?{title:"Learning Resource",description:"Resource details are loading from Astrratech Learning Academy."}:{title:"Page Not Found",description:"The resource you’re looking for isn’t available. Browse learning resources at Astrratech Learning Academy."};
+    robots="noindex,follow";
+    canonicalPath=null;
+   }
+  }else if(!metadata){
+   metadata={title:"Page Not Found",description:"The page you’re looking for isn’t available. Visit Astrratech Learning Academy to explore courses and resources."};
+   robots="noindex,follow";
+   canonicalPath=null;
+  }
+  const title=`${metadata.title} | Astrratech Learning Academy`;
+  const canonical=canonicalPath?`${SEO_SITE_URL}${canonicalPath}`:null;
+  document.title=title;
+  const setMeta=(selector,attribute,value,tagName,attributeName)=>{
+   let element=document.head.querySelector(selector);
+   if(value===null){element?.remove();return}
+   if(!element){element=document.createElement(tagName);element.setAttribute(attributeName,attribute);document.head.appendChild(element)}
+   element.setAttribute("content",value);
+  };
+  setMeta('meta[name="description"]',"description",metadata.description,"meta","name");
+  setMeta('meta[name="robots"]',"robots",robots,"meta","name");
+  setMeta('meta[property="og:title"]',"og:title",title,"meta","property");
+  setMeta('meta[property="og:description"]',"og:description",metadata.description,"meta","property");
+  setMeta('meta[property="og:type"]',"og:type","website","meta","property");
+  setMeta('meta[property="og:site_name"]',"og:site_name","Astrratech Learning Academy","meta","property");
+  setMeta('meta[property="og:image"]',"og:image",SEO_SOCIAL_IMAGE,"meta","property");
+  setMeta('meta[property="og:url"]',"og:url",canonical,"meta","property");
+  setMeta('meta[name="twitter:card"]',"twitter:card","summary_large_image","meta","name");
+  setMeta('meta[name="twitter:title"]',"twitter:title",title,"meta","name");
+  setMeta('meta[name="twitter:description"]',"twitter:description",metadata.description,"meta","name");
+  setMeta('meta[name="twitter:image"]',"twitter:image",SEO_SOCIAL_IMAGE,"meta","name");
+  let canonicalElement=document.head.querySelector('link[rel="canonical"]');
+  if(canonical){if(!canonicalElement){canonicalElement=document.createElement("link");canonicalElement.rel="canonical";document.head.appendChild(canonicalElement)}canonicalElement.href=canonical}else canonicalElement?.remove();
+ },[pathname,content.courses,content.resources,loading]);
+ return null;
+}
+function AdminLoginErrorAnnouncement(){
+ const {pathname}=useLocation();
+ useEffect(()=>{
+  if(!isAdminEntryPath(pathname))return;
+  const loginCard=document.querySelector(".admin-login-card");
+  if(!loginCard)return;
+  const exposeLoginErrors=()=>loginCard.querySelectorAll(".form-status").forEach(message=>message.setAttribute("role","alert"));
+  exposeLoginErrors();
+  const observer=new MutationObserver(exposeLoginErrors);
+  observer.observe(loginCard,{childList:true,subtree:true});
+  return()=>observer.disconnect();
+ },[pathname]);
+ return null;
+}
 function HeroReactiveHeading() {
   const headingRef = useRef(null);
   const animationRef = useRef(null);
@@ -518,6 +584,8 @@ function onPointerMove(event) {
         <em className="about-heading-line about-heading-em" aria-hidden="true">
           {renderCharacters(secondLine)}
         </em>
+      ) : loading || error ? (
+        <CollectionState items={visibleResults} loading={loading} error={error} label="results"/>
       ) : (
         <span className="about-heading-line" aria-hidden="true">
           {renderCharacters(secondLine)}
@@ -1959,7 +2027,7 @@ function FooterReactiveHeading() {
 
 
 
-function Home({content}){return <><main><section className="hero wrap"><div className="hero-copy"><Reveal><div className="eyebrow"><span/> LEARN WITH INTENTION</div><HeroReactiveHeading /><p className="hero-lead">A learning experience built around strong foundations, thoughtful guidance and the confidence to take your next step.</p><div className="hero-actions"><ButtonLink to="/courses">Explore programmes</ButtonLink><Link className="underlink" to="/about">Discover our approach <ArrowRight size={16}/></Link></div><div className="hero-proof"><div className="proof-avatars"><span>A</span><span>R</span><span>S</span><span>+</span></div><div><strong>Every learner has a path.</strong><small>We help you find yours.</small></div></div></Reveal></div><Reveal className="hero-visual"><div className="hero-photo"><div className="hero-photo-overlay"/><div className="hero-photo-caption"><span className="caption-star"><Sparkles size={17}/></span><div><strong>Progress, with purpose.</strong><small>A little better every day.</small></div></div></div><div className="float-card float-top"><span className="float-symbol"><Target size={19}/></span><div><strong>Learning that fits</strong><small>Clear goals, steady growth</small></div></div><div className="float-card float-bottom"><div className="bars"><i/><i/><i/><i/><i/></div><div><strong>Find your momentum</strong><small>One step at a time</small></div></div><div className="hero-stamp">GROW<br/>WITH<br/>CONFIDENCE <ArrowDownRight size={18}/></div></Reveal></section><div className="trustbar"><div className="wrap trust-inner"><span><ShieldCheck/> Student-first learning</span><span><Users/> Supportive mentors</span><span><Target/> Purposeful practice</span><span><Compass/> A path that feels clear</span></div></div>
+function Home({content,loading,errors}){return <><main><section className="hero wrap"><div className="hero-copy"><Reveal><div className="eyebrow"><span/> LEARN WITH INTENTION</div><HeroReactiveHeading /><p className="hero-lead">A learning experience built around strong foundations, thoughtful guidance and the confidence to take your next step.</p><div className="hero-actions"><ButtonLink to="/courses">Explore programmes</ButtonLink><Link className="underlink" to="/about">Discover our approach <ArrowRight size={16}/></Link></div><div className="hero-proof"><div className="proof-avatars"><span>A</span><span>R</span><span>S</span><span>+</span></div><div><strong>Every learner has a path.</strong><small>We help you find yours.</small></div></div></Reveal></div><Reveal className="hero-visual"><div className="hero-photo"><div className="hero-photo-overlay"/><div className="hero-photo-caption"><span className="caption-star"><Sparkles size={17}/></span><div><strong>Progress, with purpose.</strong><small>A little better every day.</small></div></div></div><div className="float-card float-top"><span className="float-symbol"><Target size={19}/></span><div><strong>Learning that fits</strong><small>Clear goals, steady growth</small></div></div><div className="float-card float-bottom"><div className="bars"><i/><i/><i/><i/><i/></div><div><strong>Find your momentum</strong><small>One step at a time</small></div></div><div className="hero-stamp">GROW<br/>WITH<br/>CONFIDENCE <ArrowDownRight size={18}/></div></Reveal></section><div className="trustbar"><div className="wrap trust-inner"><span><ShieldCheck/> Student-first learning</span><span><Users/> Supportive mentors</span><span><Target/> Purposeful practice</span><span><Compass/> A path that feels clear</span></div></div>
 <section className="section section-soft">
   <div className="wrap">
     <div className="section-heading">
@@ -1978,9 +2046,9 @@ function Home({content}){return <><main><section className="hero wrap"><div clas
     </div>
 
     <div className="course-grid">
-      {content.courses.slice(0, 3).map((c, i) => (
+      {content.courses.length ? content.courses.slice(0, 3).map((c, i) => (
         <CourseCard c={c} i={i} key={c._id || c.title} />
-      ))}
+      )) : <CollectionState items={content.courses} loading={loading} error={errors.courses} label="courses"/>}
     </div>
 
     <div className="section-end">
@@ -2006,6 +2074,8 @@ function Home({content}){return <><main><section className="hero wrap"><div clas
   <div className="approach-grid">
     <Reveal className="approach-image">
       <img
+        loading="lazy"
+        decoding="async"
         src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=85"
         alt="Students learning together"
       />
@@ -2014,7 +2084,6 @@ function Home({content}){return <><main><section className="hero wrap"><div clas
         <span>✳</span>
         <div>
           <strong>Curiosity is a good place to start.</strong>
-          <small>Sample academy photography</small>
         </div>
       </div>
     </Reveal>
@@ -2086,33 +2155,18 @@ function Home({content}){return <><main><section className="hero wrap"><div clas
       </div>
 
       <p>
-        Discover the progress our learners strive for through focused preparation, strong foundations and a commitment to excellence.
+        Published learner results will be shared here as they become available.
       </p>
     </div>
 
     <div className="results-note">
       <ShieldCheck />
       <p>
-        <strong>results.</strong>  Every milestone reflects dedication, consistent effort and a passion for learning.
+        <strong>For transparency.</strong> Only published learner results are shown here.
       </p>
     </div>
 
-    <div className="result-grid">
-      {content.results.slice(0, 3).map((r, i) => (
-        <Reveal
-          className="result-card"
-          key={r._id || r.name || r.title || i}
-        >
-          <span className="result-num">0{i + 1}</span>
-          <strong>{r.score || "—"}</strong>
-          <h3>{r.name || r.title}</h3>
-          <p>
-            {r.role} · {r.year}
-          </p>
-          <small>{r.description}</small>
-        </Reveal>
-      ))}
-    </div>
+    <ResultCards results={content.results} limit={3} loading={loading} error={errors.results}/>
 
     <div className="section-end">
       <ButtonLink to="/results">All results &amp; achievements</ButtonLink>
@@ -2136,13 +2190,13 @@ function Home({content}){return <><main><section className="hero wrap"><div clas
   </div>
 
   <div className="faculty-grid">
-    {content.faculty.slice(0, 3).map((f, i) => (
+    {content.faculty.length ? content.faculty.slice(0, 3).map((f, i) => (
       <FacultyCard
         f={f}
         i={i}
         key={f._id || f.name}
       />
-    ))}
+    )) : <CollectionState items={content.faculty} loading={loading} error={errors.faculty} label="faculty"/>}
   </div>
 
   <div className="section-end">
@@ -2167,7 +2221,7 @@ function Home({content}){return <><main><section className="hero wrap"><div clas
     </p>
   </div>
 
-  <TestimonialCards testimonials={content.testimonials.slice(0, 3)} />
+  {content.testimonials.length ? <TestimonialCards testimonials={content.testimonials.slice(0, 3)} /> : <CollectionState items={content.testimonials} loading={loading} error={errors.testimonials} label="testimonials"/>}
 
   <div className="section-end">
     <ButtonLink to="/testimonials">Read all testimonials</ButtonLink>
@@ -2195,7 +2249,7 @@ function Home({content}){return <><main><section className="hero wrap"><div clas
     </div>
 
     <div className="notice-list">
-      {content.notices.slice(0, 3).map((n, i) => (
+      {content.notices.length ? content.notices.slice(0, 3).map((n, i) => (
         <Reveal
           className="notice-row"
           key={n._id || n.title}
@@ -2216,7 +2270,7 @@ function Home({content}){return <><main><section className="hero wrap"><div clas
 
           <ArrowUpRight />
         </Reveal>
-      ))}
+      )) : <CollectionState items={content.notices} loading={loading} error={errors.notices} label="notices"/>}
     </div>
 
     <div className="section-end">
@@ -2273,7 +2327,7 @@ function Home({content}){return <><main><section className="hero wrap"><div clas
             <Plus size={16} />
           </summary>
           <p>
-            "Getting started is simple. Visit our Contact page and submit the enquiry form with your name, contact details and area of interest. Our team will help you understand the admission process and guide you through the next steps."
+            Getting started is simple. Visit our Contact page and submit the enquiry form with your name, contact details and area of interest. Our team will help you understand the admission process and guide you through the next steps.
             
           </p>
         </details>
@@ -2284,7 +2338,7 @@ function Home({content}){return <><main><section className="hero wrap"><div clas
             <Plus size={16} />
           </summary>
           <p>
-            "Students can refer to the learning materials and resources made available for their respective programmes. For details about specific study materials, please get in touch with our team."
+            Students can refer to the learning materials and resources made available for their respective programmes. For details about specific study materials, please get in touch with our team.
           </p>
         </details>
 
@@ -2317,11 +2371,12 @@ function Home({content}){return <><main><section className="hero wrap"><div clas
 
 
 
-function CourseCard({c,i=0}){return <Reveal className="course-card-wrap" delay={i*.12}><Link className="course-card" to={coursePath(c)} aria-label={`View ${c.title} course details`}><div className="course-card-top"><span className="course-icon">{c.icon||"✳"}</span><span className="course-category">{c.category||"PROGRAMME"}</span></div><h3>{c.title}</h3><p>{c.description}</p><div className="course-bottom"><span><Clock3 size={13}/> {c.duration||"Flexible schedule"}</span><span className="course-card-arrow" aria-hidden="true"><ArrowUpRight/></span></div></Link></Reveal>}
-function CourseDetail({content,loading}){const {courseId}=useParams();const id=courseId.toLowerCase();const course=content.courses.find(item=>String(item._id).toLowerCase()===id||String(item.slug||"").toLowerCase()===id||courseSlug(item)===id);if(!course&&loading)return <PageHero eyebrow="COURSE DETAILS" title="Loading course…" copy="Please wait while course details are loaded."/>;if(!course)return <><PageHero eyebrow="COURSE NOT FOUND" title={<>We couldn’t find<br/><em>that course.</em></>} copy="The course may have been removed or its link may be out of date."/><section className="section wrap"><div className="inline-callout"><BookOpen/><div><strong>Browse available courses</strong><p>Explore the current course list or contact us for help.</p></div><ButtonLink to="/courses">View courses</ButtonLink></div></section></>;return <><PageHero eyebrow={course.category||"COURSE DETAILS"} title={course.title} copy={course.description}/><section className="section wrap"><div className="course-detail-meta"><div><small>CATEGORY</small><strong>{course.category||"Programme"}</strong></div><div><small>DURATION</small><strong>{course.duration||"Flexible schedule"}</strong></div></div><div className="inline-callout"><BookOpen/><div><strong>Interested in this course?</strong><p>Contact us to discuss course details and your enquiry.</p></div><ButtonLink to="/contact">Enquire now</ButtonLink></div></section></>}
-function FacultyCard({f,i=0}){return <Reveal className="faculty-card" delay={i*.07}><div className="faculty-photo"><img src={imageUrl(f.image)||imageFallback} alt={`${f.name} profile`} onError={e=>{e.currentTarget.onerror=null;e.currentTarget.src=imageFallback}}/><span className="faculty-tag">ASTRRATECH FACULTY</span></div><div className="faculty-info"><div><h3>{f.name}</h3><p>{f.role}</p><small>{f.qualification}</small></div><ArrowUpRight/></div><p className="faculty-desc">{f.description}</p></Reveal>}
+function CourseCard({c,i=0}){return <Reveal className="course-card-wrap" delay={i*.12}><Link className="course-card" to={coursePath(c)} aria-label={`View ${c.title} course details`}><div className="course-card-top"><span className="course-icon">{c.icon||"✳"}</span><span className="course-category">{c.category||"PROGRAMME"}</span></div><h3>{c.title}</h3><p>{c.description}</p><div className="course-bottom">{c.duration&&<span><Clock3 size={13}/> {c.duration}</span>}<span className="course-card-arrow" aria-hidden="true"><ArrowUpRight/></span></div></Link></Reveal>}
+function DetailLoadState({label,onRetry,error=false}){return <section className="section wrap"><div className="inline-callout" role={error?"alert":"status"}>{error?<CircleHelp aria-hidden="true"/>:<LoaderCircle className="spin" aria-hidden="true"/>}<div><strong>{error?`${label} are temporarily unavailable.`:`Loading ${label.toLowerCase()}…`}</strong><p>{error?"Please try again in a moment.":"Please wait while the requested details are loaded."}</p></div>{error&&onRetry&&<button type="button" className="btn btn-dark" onClick={onRetry}>Try again</button>}</div></section>}
+function CourseDetail({content,loading,error,refresh}){const {courseId}=useParams();const id=courseId.toLowerCase();const course=content.courses.find(item=>String(item._id).toLowerCase()===id||String(item.slug||"").toLowerCase()===id||courseSlug(item)===id);if(!course&&loading)return <><PageHero eyebrow="COURSE DETAILS" title="Loading course…" copy="Please wait while course details are loaded."/><DetailLoadState label="Course details"/></>;if(!course&&error)return <><PageHero eyebrow="COURSE DETAILS" title="Course temporarily unavailable." copy="We couldn’t load the requested course details."/><DetailLoadState label="Course details" error onRetry={refresh}/></>;if(!course)return <><PageHero eyebrow="COURSE NOT FOUND" title={<>We couldn’t find<br/><em>that course.</em></>} copy="The course may have been removed or its link may be out of date."/><section className="section wrap"><div className="inline-callout"><BookOpen/><div><strong>Browse available courses</strong><p>Explore the current course list or contact us for help.</p></div><ButtonLink to="/courses">View courses</ButtonLink></div></section></>;return <><PageHero eyebrow={course.category||"COURSE DETAILS"} title={course.title} copy={course.description}/><section className="section wrap"><div className="course-detail-meta"><div><small>CATEGORY</small><strong>{course.category||"Programme"}</strong></div>{course.duration&&<div><small>DURATION</small><strong>{course.duration}</strong></div>}</div><div className="inline-callout"><BookOpen/><div><strong>Interested in this course?</strong><p>Contact us to discuss course details and your enquiry.</p></div><ButtonLink to="/contact">Enquire now</ButtonLink></div></section></>}
+function FacultyCard({f,i=0}){return <Reveal className="faculty-card" delay={i*.07}><div className="faculty-photo"><img loading="lazy" decoding="async" src={imageUrl(f.image)||imageFallback} alt={`${f.name} profile`} onError={e=>{e.currentTarget.onerror=null;e.currentTarget.src=imageFallback}}/><span className="faculty-tag">ASTRRATECH FACULTY</span></div><div className="faculty-info"><div><h3>{f.name}</h3><p>{f.role}</p><small>{f.qualification}</small></div><ArrowUpRight/></div><p className="faculty-desc">{f.description}</p></Reveal>}
 function AdminImageField({value,onChange}){const [file,setFile]=useState(null);const [preview,setPreview]=useState("");const [error,setError]=useState("");const [uploading,setUploading]=useState(false);const input=useRef(null);useEffect(()=>{if(!file){setPreview("");return}const url=URL.createObjectURL(file);setPreview(url);return()=>URL.revokeObjectURL(url)},[file]);const previewSource=file?preview:imageUrl(value);const filename=file?.name||value?.split(/[?#]/)[0].split("/").pop()||"";async function upload(){if(!file)return;setUploading(true);setError("");try{const savedImage=await uploadImage(file);onChange(savedImage);setFile(null);if(input.current)input.current.value=""}catch(e){setError(e.message)}finally{setUploading(false)}}function remove(){setFile(null);if(input.current)input.current.value="";onChange("");setError("")}return <div className="admin-image-field"><label className="admin-image-url-field">Image URL<input type="url" value={value} placeholder="https://example.com/image.jpg" disabled={uploading} onChange={e=>{setFile(null);if(input.current)input.current.value="";setError("");onChange(e.target.value)}}/></label><div className="admin-image-upload"><div className="admin-image-preview">{previewSource?<img src={previewSource} alt="Selected image preview" onError={e=>{e.currentTarget.onerror=null;e.currentTarget.src=imageFallback}}/>:<ImagePlus size={23}/>}</div><div className="admin-image-details"><strong>{filename||"No image selected"}</strong><small>{file?`${(file.size/1024/1024).toFixed(2)} MB · ready to upload`:value?"Current image":"Upload an image or enter a URL"}</small><div className="admin-image-actions"><input ref={input} className="admin-image-file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,image/avif,.jpg,.jpeg,.png,.webp,.gif,.bmp,.avif" disabled={uploading} onChange={e=>{setFile(e.target.files?.[0]||null);setError("")}}/><button type="button" className="admin-image-button" disabled={uploading} onClick={()=>input.current?.click()}>Choose File</button><button type="button" className="admin-image-button admin-image-upload-button" disabled={!file||uploading} onClick={upload}>{uploading?"Uploading…":"Upload Image"}</button>{(value||file)&&<button type="button" className="admin-image-remove" disabled={uploading} onClick={remove}>Remove</button>}</div></div></div>{error&&<p className="admin-image-error" role="alert">{error}</p>}</div>}
-function PageHero({eyebrow,title,copy}){return <section className="page-hero"><div className="wrap"><div className="eyebrow"><span/> {eyebrow}</div><h1>{title}</h1><p>{copy}</p></div></section>}
+function PageHero({eyebrow,title,copy}){const heading=React.isValidElement(title)&&title.type===AboutReactiveHeading?React.cloneElement(title,{level:1}):<h1>{title}</h1>;return <section className="page-hero"><div className="wrap"><div className="eyebrow"><span/> {eyebrow}</div>{heading}<p>{copy}</p></div></section>}
 
 
 function About() {
@@ -2344,6 +2399,8 @@ function About() {
       <section className="section wrap two-col about-philosophy">
         <img
           className="editorial-image"
+          loading="lazy"
+          decoding="async"
           src="https://images.unsplash.com/photo-1529390079861-591de354faf5?auto=format&fit=crop&w=1200&q=85"
           alt="Students working together in a learning environment"
         />
@@ -2430,7 +2487,7 @@ function About() {
   );
 }
 
-function Courses({ content }) {
+function Courses({ content, loading, errors }) {
   return (
     <>
       <PageHero
@@ -2446,10 +2503,11 @@ function Courses({ content }) {
       />
 
       <section  id="courses-page" className="section wrap">
+        <h2 className="sr-only">Available courses</h2>
         <div className="course-grid course-grid-all">
-          {content.courses.map((c, i) => (
+          {content.courses.length ? content.courses.map((c, i) => (
             <CourseCard c={c} i={i} key={c._id || c.title} />
-          ))}
+          )) : <CollectionState items={content.courses} loading={loading} error={errors.courses} label="courses"/>}
         </div>
 
         <div className="inline-callout">
@@ -2468,7 +2526,7 @@ function Courses({ content }) {
   );
 }
 
-function Faculty({content}){return <><PageHero eyebrow="MEET THE TEAM" title={
+function Faculty({content,loading,errors}){return <><PageHero eyebrow="MEET THE TEAM" title={
   <AboutReactiveHeading
     level={1}
     firstLine="Good teachers make"
@@ -2476,30 +2534,79 @@ function Faculty({content}){return <><PageHero eyebrow="MEET THE TEAM" title={
   />
 } copy="Meet the educators who make learning clearer, encourage curiosity and help every student grow with confidence."/>
 <section id="faculty-page" className="section wrap">
+  <h2 className="sr-only">Our faculty</h2>
   <div className="faculty-grid faculty-grid-all">
-    {content.faculty.map((f,i)=><FacultyCard f={f} i={i} key={f._id||f.name}/>)}
-    </div></section></>}
+    {content.faculty.length?content.faculty.map((f,i)=><FacultyCard f={f} i={i} key={f._id||f.name}/>):<CollectionState items={content.faculty} loading={loading} error={errors.faculty} label="faculty"/>}
+    </div>
+  <div className="section-end">
+    <Link className="underlink" to="/contact">Ask us about our educators <ArrowRight size={16}/></Link>
+  </div>
+</section></>}
 
 
 
 
 
-function Results({content}){return <><PageHero eyebrow="RESULTS & ACHIEVEMENTS" title={
+function ResultCards({ results, limit, loading = false, error = false, onRetry }) {
+  const publishedResults = results.filter((result) => result.sample !== true);
+  const visibleResults = Number.isInteger(limit)
+    ? publishedResults.slice(0, limit)
+    : publishedResults;
+
+  return (
+    <div className="result-grid">
+      {visibleResults.length > 0 ? visibleResults.map((result, index) => (
+        <Reveal
+          className="result-card"
+          key={result._id || result.name || result.title || index}
+        >
+          <span className="result-num">0{index + 1}</span>
+          <strong>{result.score || "—"}</strong>
+          <h3>{result.name || result.title}</h3>
+          <p>{result.role} · {result.year}</p>
+          <small>{result.description}</small>
+        </Reveal>
+      )) : (
+        loading ? (
+          <div className="results-empty-state" role="status">
+            <LoaderCircle className="spin" aria-hidden="true" />
+            <p>Loading published learner results…</p>
+          </div>
+        ) : error ? (
+          <div className="results-empty-state" role="alert">
+            <CircleHelp aria-hidden="true" />
+            <p>Results are temporarily unavailable. Please try again.</p>
+            {onRetry && <button type="button" className="btn btn-dark" onClick={onRetry}>Try again</button>}
+          </div>
+        ) : (
+          <div className="results-empty-state" role="status">
+            <ShieldCheck aria-hidden="true" />
+            <p>Published learner results will appear here when available.</p>
+          </div>
+        )
+      )}
+    </div>
+  );
+}
+
+function Results({content,loading,errors,refresh}){return <><PageHero eyebrow="RESULTS & ACHIEVEMENTS" title={
   <AboutReactiveHeading
     level={1}
     firstLine="Celebrate progress."
     secondLine="Keep reaching."
   />
-} copy="Every achievement reflects dedication, consistent effort and a commitment to learning. Discover the milestones that celebrate our learners' progress."/>
+} copy="Published learner results will be shared here as they become available."/>
 <section  id="results-page" className="section wrap">
+  <h2 className="sr-only">Results and achievements</h2>
   <div className="results-note"><ShieldCheck/><p>
-    <strong>Transparency matters.</strong>
-     We celebrate our learners’ progress, dedication and growth at every step of their educational journey.</p></div>
-     <div className="result-grid">{content.results.map((r,i)=><Reveal className="result-card" key={r._id||r.name}>
-      <span className="result-num">0{i+1}</span><strong>{r.score||"—"}</strong>
-      <h3>{r.name||r.title}</h3><p>{r.role} · {r.year}</p><small>{r.description}</small></Reveal>)}</div>
+    <strong>For transparency.</strong>
+     Only published learner results are shown here.</p></div>
+     <ResultCards results={content.results} loading={loading} error={errors.results} onRetry={refresh}/>
       <div className="achievement-panel"><Award size={32}/><div>
         <h3>More than a score</h3><p>Recognise effort, consistency, personal improvement and achievements beyond exam results.</p></div></div>
+      <div className="section-end">
+        <Link className="underlink" to="/contact">Ask a question about results <ArrowRight size={16}/></Link>
+      </div>
         </section></>}
 
 
@@ -2513,7 +2620,7 @@ function Admissions(){return <><PageHero
     />
   }
   copy="A simple, welcoming process to help you explore course options and understand what to expect."
-/><section id="admissions-page" className="section wrap"><div className="admission-timeline">{[["01","Start a conversation","Tell us about the learner, their goals and the kind of support they’re looking for."],["02","Explore the options","Discuss relevant sample programmes, learning expectations and schedule."],["03","Confirm the details","Review the information, availability and any required documents with the academy."],["04","Begin your journey","Get the joining information and a clear plan for the first session."]].map(([n,t,d])=><div key={n} className="timeline-item"><span>{n}</span><div><h3>{t}</h3><p>{d}</p></div></div>)}</div><div className="inline-callout"><GraduationCap/><div><strong>Have questions before applying?</strong><p>Send an enquiry and ask us about the next step.</p></div><ButtonLink to="/contact">Enquire now</ButtonLink></div></section></>}
+/><section id="admissions-page" className="section wrap"><div className="admission-timeline">{[["01","Start a conversation","Tell us about the learner, their goals and the kind of support they’re looking for."],["02","Explore the options","Discuss relevant programmes, learning expectations and schedule."],["03","Confirm the details","Review the information, availability and any required documents with the academy."],["04","Begin your journey","Get the joining information and a clear plan for the first session."]].map(([n,t,d])=><div key={n} className="timeline-item"><span>{n}</span><div><h3>{t}</h3><p>{d}</p></div></div>)}</div><div className="inline-callout"><GraduationCap/><div><strong>Have questions before applying?</strong><p>Send an enquiry and ask us about the next step.</p></div><ButtonLink to="/contact">Enquire now</ButtonLink></div></section></>}
 
 function TestimonialCards({ testimonials }) {
   return (
@@ -2544,7 +2651,7 @@ function TestimonialCards({ testimonials }) {
 
               <div>
                 <strong>{name}</strong>
-                <small>{t.role || "Student"}</small>
+                {t.role && <small>{t.role}</small>}
               </div>
             </div>
           </Reveal>
@@ -2554,15 +2661,15 @@ function TestimonialCards({ testimonials }) {
   );
 }
 
-function Testimonials({content}){return <><PageHero eyebrow="STUDENT STORIES · LEARNING EXPERIENCES" title={
+function Testimonials({content,loading,errors}){return <><PageHero eyebrow="STUDENT STORIES · LEARNING EXPERIENCES" title={
   <AboutReactiveHeading
     level={1}
     firstLine="Every learner has"
     secondLine="a story to tell."
   />
-} copy="Every learning journey is different. Discover how thoughtful guidance, consistent practice and the right support can help learners move forward with confidence."/><section className="section wrap"><div className="results-note"><ShieldCheck/><p><strong>Notice banner: </strong> Every learner’s journey is unique. These stories illustrate the values and learning experience we aim to create at Astratech.</p></div><TestimonialCards testimonials={content.testimonials}/><div className="section-end"><ButtonLink to="/courses">Explore courses</ButtonLink></div></section></>}
+} copy="Every learning journey is different. Discover how thoughtful guidance, consistent practice and the right support can help learners move forward with confidence."/><section className="section wrap"><h2 className="sr-only">Student testimonials</h2>{content.testimonials.length?<TestimonialCards testimonials={content.testimonials}/>:<CollectionState items={content.testimonials} loading={loading} error={errors.testimonials} label="testimonials"/>}<div className="section-end"><ButtonLink to="/courses">Explore courses</ButtonLink></div></section></>}
 
-function Resources({content}){return <><PageHero
+function Resources({content,loading,errors}){return <><PageHero
   eyebrow="THE LEARNING LIBRARY"
   title={
     <AboutReactiveHeading
@@ -2572,10 +2679,12 @@ function Resources({content}){return <><PageHero
     />
   }
   copy="Explore practical study guides, revision checklists and learning tips to help students stay organised, build confidence and make steady progress."
-/><section id="resources-page" className="section wrap"><div className="resource-grid">{content.resources.map((r,i)=><Reveal className="resource-card" key={r._id||r.title} delay={i*.06}><div className="resource-card-icon"><BookMarked/></div><span>{r.category||r.type||"LEARNING RESOURCE"}</span><h3>{r.title}</h3><p>{r.description}</p><Link className="resource-action" to={resourcePath(r)}>View resource <ArrowUpRight size={15}/></Link></Reveal>)}</div></section></>}
+/><section id="resources-page" className="section wrap"><h2 className="sr-only">Learning resources</h2><div className="resource-grid">{content.resources.length?content.resources.map((r,i)=><Reveal className="resource-card" key={r._id||r.title} delay={i*.06}><div className="resource-card-icon"><BookMarked/></div><span>{r.category||r.type||"LEARNING RESOURCE"}</span><h3>{r.title}</h3><p>{r.description}</p><Link className="resource-action" to={resourcePath(r)}>View resource <ArrowUpRight size={15}/></Link></Reveal>):<CollectionState items={content.resources} loading={loading} error={errors.resources} label="resources"/>}</div>
+<div className="section-end"><Link className="underlink" to="/courses">Explore courses <ArrowRight size={16}/></Link></div>
+</section></>}
 
-function ResourceDetail({content,loading}){const {resourceId}=useParams();const resource=findByIdOrSlug(content.resources,resourceId);if(!resource&&loading)return <PageHero eyebrow="LEARNING RESOURCE" title="Loading resource…" copy="Please wait while this resource is loaded."/>;if(!resource)return <><PageHero eyebrow="RESOURCE NOT FOUND" title={<>Resource not<br/><em>available.</em></>} copy="This resource may have been removed or its link may be out of date."/><section className="section wrap"><ButtonLink to="/resources">Browse resources</ButtonLink></section></>;const candidate=resource.downloadUrl||resource.fileUrl||resource.url;const fileUrl=typeof candidate==="string"&&(/^(https?:\/\/|\/)/i).test(candidate)?candidate:null;return <><PageHero eyebrow={resource.category||resource.type||"LEARNING RESOURCE"} title={resource.title} copy={resource.description}/><section className="section wrap resource-detail"><div className="results-note"><BookMarked/><p><strong>{resource.category||resource.type||"Sample resource"}</strong><br/>{resource.sample===false?"Resource details are provided by the academy.":"Demo resource content. Replace with approved material before publication."}</p></div>{fileUrl?<div className="resource-download"><p>An approved file is available for this resource.</p><a className="btn btn-dark" href={fileUrl} target="_blank" rel="noreferrer">View resource <ArrowUpRight size={16}/></a><a className="btn btn-light" href={fileUrl} download>Download resource <Download size={16}/></a></div>:<p className="resource-unavailable">No approved file is attached to this resource yet.</p>}<div className="section-end"><ButtonLink to="/resources">Back to resources</ButtonLink></div></section></>}
-function Notices({ content }) {
+function ResourceDetail({content,loading,error,refresh}){const {resourceId}=useParams();const resource=findByIdOrSlug(content.resources,resourceId);if(!resource&&loading)return <><PageHero eyebrow="LEARNING RESOURCE" title="Loading resource…" copy="Please wait while this resource is loaded."/><DetailLoadState label="Resource details"/></>;if(!resource&&error)return <><PageHero eyebrow="LEARNING RESOURCE" title="Resource temporarily unavailable." copy="We couldn’t load the requested resource details."/><DetailLoadState label="Resource details" error onRetry={refresh}/></>;if(!resource)return <><PageHero eyebrow="RESOURCE NOT FOUND" title={<>Resource not<br/><em>available.</em></>} copy="This resource may have been removed or its link may be out of date."/><section className="section wrap"><ButtonLink to="/resources">Browse resources</ButtonLink></section></>;const candidate=resource.downloadUrl||resource.fileUrl||resource.url;const fileUrl=typeof candidate==="string"&&(/^(https?:\/\/|\/)/i).test(candidate)?candidate:null;return <><PageHero eyebrow={resource.category||resource.type||"LEARNING RESOURCE"} title={resource.title} copy={resource.description}/><section className="section wrap resource-detail"><div className="results-note"><BookMarked/><p><strong>{resource.category||resource.type||"Learning resource"}</strong><br/>Details and access options are shown below.</p></div>{fileUrl?<div className="resource-download"><p>An approved file is available for this resource.</p><a className="btn btn-dark" href={fileUrl} target="_blank" rel="noreferrer">View resource <ArrowUpRight size={16}/></a><a className="btn btn-light" href={fileUrl} download>Download resource <Download size={16}/></a></div>:<p className="resource-unavailable">No approved file is attached to this resource yet.</p>}<div className="section-end"><ButtonLink to="/resources">Back to resources</ButtonLink></div></section></>}
+function Notices({ content, loading, errors }) {
   return (
     <>
       <PageHero
@@ -2591,8 +2700,9 @@ function Notices({ content }) {
       />
 
       <section className="section wrap">
+        <h2 className="sr-only">Latest notices</h2>
         <div className="notice-list notice-list-page">
-          {content.notices.map((n, i) => (
+          {content.notices.length ? content.notices.map((n, i) => (
             <div className="notice-row" key={n._id || n.title}>
               <span className="notice-index">0{i + 1}</span>
               <div>
@@ -2605,7 +2715,10 @@ function Notices({ content }) {
                 {n.date || "Date to be announced"}
               </span>
             </div>
-          ))}
+          )) : <CollectionState items={content.notices} loading={loading} error={errors.notices} label="notices"/>}
+        </div>
+        <div className="section-end">
+          <Link className="underlink" to="/resources">Explore learning resources <ArrowRight size={16}/></Link>
         </div>
       </section>
     </>
@@ -2730,7 +2843,7 @@ const faqs = [
   );
 }
 
-function Contact({content}){const [form,setForm]=useState({name:"",phone:"",email:"",course:"",message:""});const [status,setStatus]=useState("");const [busy,setBusy]=useState(false);const contact=content.contact||DEFAULT_CONTACT_SETTINGS;const submitting=useRef(false);async function submit(e){e.preventDefault();if(submitting.current)return;submitting.current=true;setBusy(true);setStatus("");try{const result=await api("/enquiries",{method:"POST",body:JSON.stringify(form)});setStatus(result.message||"Demo enquiry submitted.");setForm({name:"",phone:"",email:"",course:"",message:""})}catch(err){setStatus(`${err.message} (Start the API and connect MongoDB Atlas to save enquiries.)`)}finally{submitting.current=false;setBusy(false)}}return <>
+function Contact({content}){const [form,setForm]=useState({name:"",phone:"",email:"",course:"",message:""});const [status,setStatus]=useState("");const [busy,setBusy]=useState(false);const contact=content.contact||DEFAULT_CONTACT_SETTINGS;const contactDescription=contact.description?.trim()||DEFAULT_CONTACT_SETTINGS.description;const submitting=useRef(false);async function submit(e){e.preventDefault();if(submitting.current)return;submitting.current=true;setBusy(true);setStatus("");try{const result=await api("/enquiries",{method:"POST",body:JSON.stringify(form)});setStatus(result.message||"Enquiry submitted.");setForm({name:"",phone:"",email:"",course:"",message:""})}catch(err){setStatus(`${err.message} Please try again later.`)}finally{submitting.current=false;setBusy(false)}}return <>
 <PageHero
   eyebrow="GET IN TOUCH"
   title={
@@ -2744,17 +2857,16 @@ function Contact({content}){const [form,setForm]=useState({name:"",phone:"",emai
 />
 <section className="section wrap contact-layout"><div className="contact-details"><h2>{contact.heading}</h2>
 <p className="body-copy">
-  Have a question about our programmes? Tell us what you're looking for,
-  and we'll help you explore the next step in your learning journey.
+  {contactDescription}
 </p>
-<div className="contact-detail"><Mail/><div><small>EMAIL</small><a href={`mailto:${contact.email}`}><strong>{contact.email}</strong></a></div></div><div className="contact-detail"><Phone/><div><small>PHONE</small><a href={`tel:${contact.phone.replace(/[^+\d]/g,"")}`}><strong>{contact.phone}</strong></a></div></div><div className="contact-detail"><MapPin/><div><small>LOCATION</small><strong>{contact.address}</strong></div></div>{contact.officeHours&&<div className="contact-detail"><Clock3/><div><small>OFFICE HOURS</small><strong>{contact.officeHours}</strong></div></div>}{contact.mapUrl?<iframe className="contact-map-embed" src={contact.mapUrl} title="Academy location map" loading="lazy" referrerPolicy="no-referrer-when-downgrade"/>:<div className="contact-map">ASTRRATECH <span>LEARNING ACADEMY</span><MapPin size={30}/><small>Location map not configured</small></div>}</div><form className="contact-form" onSubmit={submit}><div className="form-heading"><h3>Send an enquiry</h3><p>Fields marked * are required.</p></div><div className="form-two"><label>Full name *<input required minLength="2" maxLength="100" value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="Your full name"/></label><label>Phone number *<input required pattern={"[0-9+\\(\\)\\s\\-]{8,30}"} value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})} placeholder="+91 98765 43210"/></label></div><label>Email address<input type="email" maxLength="160" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder="you@example.com"/></label><label>Course of interest *<select required value={form.course} onChange={e=>setForm({...form,course:e.target.value})}><option value="">Choose a course</option>{content.courses.map(c=><option key={c._id||c.title}>{c.title}</option>)}</select></label><label>Message<textarea rows="4" maxLength="1500" value={form.message} onChange={e=>setForm({...form,message:e.target.value})} placeholder="What would you like to know?"/></label><button className="btn btn-dark submit-btn" disabled={busy}>{busy?<LoaderCircle className="spin"/>:"Submit enquiry"} {!busy&&<ArrowUpRight size={16}/>}</button>{status&&<p className="form-status" role="status">{status}</p>}<small className="form-footnote">Our team will follow up using the contact details you provide.</small></form></section></>}
+{contact.email&&<div className="contact-detail"><Mail/><div><small>EMAIL</small><a href={`mailto:${contact.email}`}><strong>{contact.email}</strong></a></div></div>}{contact.phone&&<div className="contact-detail"><Phone/><div><small>PHONE</small><a href={`tel:${contact.phone.replace(/[^+\d]/g,"")}`}><strong>{contact.phone}</strong></a></div></div>}{contact.address&&<div className="contact-detail"><MapPin/><div><small>LOCATION</small><strong>{contact.address}</strong></div></div>}{!contact.email&&!contact.phone&&!contact.address&&<p className="body-copy">Contact details will be updated soon. You can still send an enquiry using the form.</p>}{contact.officeHours&&<div className="contact-detail"><Clock3/><div><small>OFFICE HOURS</small><strong>{contact.officeHours}</strong></div></div>}{contact.mapUrl?<iframe className="contact-map-embed" src={contact.mapUrl} title="Academy location map" loading="lazy" referrerPolicy="no-referrer-when-downgrade"/>:<div className="contact-map">ASTRRATECH <span>LEARNING ACADEMY</span><MapPin size={30}/><small>Location map not configured</small></div>}</div><form className="contact-form" onSubmit={submit}><div className="form-heading"><h3>Send an enquiry</h3><p>Fields marked * are required.</p></div><div className="form-two"><label>Full name *<input required minLength="2" maxLength="100" value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="Your full name"/></label><label>Phone number *<input required pattern={"[0-9+\\(\\)\\s\\-]{8,30}"} value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})} placeholder="+91 98765 43210"/></label></div><label>Email address<input type="email" maxLength="160" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder="you@example.com"/></label><label>Course of interest *<select required value={form.course} onChange={e=>setForm({...form,course:e.target.value})}><option value="">Choose a course</option>{content.courses.length===0&&<option>General enquiry</option>}{content.courses.map(c=><option key={c._id||c.title}>{c.title}</option>)}</select></label><label>Message<textarea rows="4" maxLength="1500" value={form.message} onChange={e=>setForm({...form,message:e.target.value})} placeholder="What would you like to know?"/></label><button className="btn btn-dark submit-btn" disabled={busy}>{busy?<LoaderCircle className="spin"/>:"Submit enquiry"} {!busy&&<ArrowUpRight size={16}/>}</button>{status&&<p className="form-status" role="status">{status}</p>}<small className="form-footnote">Our team will follow up using the contact details you provide.</small></form></section></>}
 
 
 function Policy({ terms = false }) {
   const privacySections = [
     [
       "Information you share",
-      "When you contact Astratech Learning Academy, you may be asked to provide details such as your name, phone number, email address, programme of interest and enquiry message."
+      "When you contact Astrratech Learning Academy, you may be asked to provide details such as your name, phone number, email address, programme of interest and enquiry message."
     ],
     [
       "How your information is used",
@@ -2809,7 +2921,7 @@ title={
         copy={
           terms
             ? "Understand the key information about programmes, admissions, fees and related policies before you enrol."
-            : "Your trust matters to us. Learn how the information you share with Astratech Learning Academy supports your enquiries and communication with our team."
+            : "Your trust matters to us. Learn how the information you share with Astrratech Learning Academy supports your enquiries and communication with our team."
         }
       />
 
@@ -2830,9 +2942,35 @@ title={
 }
 
 
-function Admin(){const {pathname:adminPath}=useLocation();const [sessionRetry,setSessionRetry]=useState(0);const [sessionError,setSessionError]=useState("");const [token,setToken]=useState(()=>getAdminEntrySession(localStorage,adminPath));useEffect(()=>{function openLogin(){beginAdminLoginEntry(localStorage);setToken("");setSessionReady(true);setItems([]);setEnquiries([]);setSessionError("")}window.addEventListener("astratech:admin-login-entry",openLogin);return()=>window.removeEventListener("astratech:admin-login-entry",openLogin)},[]);const [sessionReady,setSessionReady]=useState(()=>!getAdminSession(localStorage.getItem("astratech_admin_token")));const [email,setEmail]=useState("");const [password,setPassword]=useState("");const [error,setError]=useState("");const [searchParams,setSearchParams]=useSearchParams();const [section,setSectionState]=useState(()=>getAdminSection(searchParams.toString(),adminPath));function setSection(next){const sectionValue=getAdminSection(`?section=${encodeURIComponent(next)}`);setSectionState(sectionValue);const nextParams=new URLSearchParams(searchParams);nextParams.set("section",sectionValue);setSearchParams(nextParams,{replace:true})}const [refreshing,setRefreshing]=useState([]);const requests=useRef(new Map());const sectionRef=useRef(section);sectionRef.current=section;const [items,setItems]=useState([]);const [contactForm,setContactForm]=useState(DEFAULT_CONTACT_SETTINGS);const [contactLoaded,setContactLoaded]=useState(false);const [enquiries,setEnquiries]=useState([]);const [overviewCounts,setOverviewCounts]=useState({});const [busy,setBusy]=useState(false);const [editId,setEditId]=useState("");const [form,setForm]=useState({title:"",category:"",duration:"",icon:"✳",description:"",name:"",role:"",qualification:"",image:"",year:"",score:"",quote:"",type:"Notice",date:"",featured:false});function throwIfNotArray(data,target){if(!Array.isArray(data))throw new Error(target+" endpoint did not return a list.")}const contentTypes=[["courses","Courses"],["faculty","Faculty"],["results","Results"],["testimonials","Testimonials"],["notices","Notices"],["resources","Resources"]];async function loadItems(s=section){const requestId=(requests.current.get(s)||0)+1;requests.current.set(s,requestId);setRefreshing(old=>old.includes(s)?old:[...old,s]);setError("");try{const targets=s==="overview"?ADMIN_OVERVIEW_SECTIONS:[s];const entries=s==="contact"?[["contact",await api(getAdminDataPath(s))]]:await Promise.all(targets.map(async target=>{const data=await api(getAdminDataPath(target));throwIfNotArray(data,target);return [target,data]}));if(requests.current.get(s)===requestId&&sectionRef.current===s){if(s==="overview")setOverviewCounts(Object.fromEntries(entries.map(([target,data])=>[target,data.length])));else if(s==="enquiries")setEnquiries(entries[0][1]);else if(s==="contact"){setContactForm({...DEFAULT_CONTACT_SETTINGS,...entries[0][1]});setContactLoaded(true);}else setItems(entries[0][1]);}return entries.length===1?entries[0][1]:Object.fromEntries(entries);}catch(e){if(requests.current.get(s)===requestId&&sectionRef.current===s){if(s==="contact")setContactLoaded(false);setError("Could not refresh "+s+": "+e.message)}return null}finally{if(requests.current.get(s)===requestId)setRefreshing(old=>old.filter(x=>x!==s))}}useEffect(()=>{if(!token){setSessionReady(true);setSessionError("");return}let active=true;setSessionReady(false);setSessionError("");api("/admin/enquiries").then(()=>{if(active)setSessionReady(true)}).catch(e=>{if(!active)return;if(isAdminSessionInvalid(e.status)){localStorage.removeItem("astratech_admin_token");setToken("");setError("Your admin session is invalid or expired. Please sign in again.")}else{setSessionError("Could not verify admin session: "+e.message)}});return()=>{active=false}},[token,sessionRetry]);useEffect(()=>{if(token&&sessionReady)loadItems(section)},[token,sessionReady,section]);useEffect(()=>{setSectionState(getAdminSection(searchParams.toString(),adminPath))},[searchParams,adminPath]);async function login(e){e.preventDefault();setBusy(true);setError("");try{const d=await api("/admin/login",{method:"POST",body:JSON.stringify({email,password})});localStorage.setItem("astratech_admin_token",d.token);setToken(d.token)}catch(e){setError(e.message)}finally{setBusy(false)}}function resetForm(){setEditId("");setForm({title:"",category:"",duration:"",icon:"✳",description:"",name:"",role:"",qualification:"",image:"",year:"",score:"",quote:"",type:"Notice",date:"",featured:false})}function edit(item){setEditId(item._id);setForm(buildAdminEditForm(section,item,form));window.scrollTo({top:0,behavior:"smooth"})}async function saveItem(e){e.preventDefault();setBusy(true);setError("");try{const payload=buildAdminPayload(section,form);const d=await api(`/admin/${section}${editId?`/${editId}`:""}`,{method:editId?"PUT":"POST",body:JSON.stringify(payload)});setItems(old=>editId?replaceAdminRecord(old,d):[d,...old]);resetForm();await loadItems(section)}catch(e){setError(e.message)}finally{setBusy(false)}}async function remove(id){if(!confirm("Delete this item?"))return;try{await api(`/admin/${section}/${id}`,{method:"DELETE"});setItems(old=>old.filter(x=>x._id!==id));await loadItems(section)}catch(e){setError(e.message)}}function logout(){localStorage.removeItem("astratech_admin_token");setToken("");setSessionReady(true);setItems([])}if(token&&!sessionReady)return <div className="admin-login-page"><div className="admin-login-card"><p role="status">{sessionError||"Checking admin session?"}</p>{sessionError&&<><button className="btn btn-dark submit-btn" onClick={()=>setSessionRetry(value=>value+1)}>Retry verification</button><button className="admin-image-button" onClick={()=>{localStorage.removeItem("astratech_admin_token");setToken("");setSessionError("");setError("")}}>Sign in instead</button></>}</div></div>;if(!token)return <div className="admin-login-page"><div className="admin-login-card"><Link className="brand" to="/"><span className="brand-icon">A<span>✦</span></span><span className="brand-name">astrratech<small>LEARNING ACADEMY</small></span></Link><div className="eyebrow"><span/> CONTENT STUDIO</div><h1>Welcome<br/><em>back.</em></h1><p>Sign in to manage the sample academy website content.</p><form onSubmit={login}><label>Admin email<input type="email" value={email} onChange={e=>setEmail(e.target.value)} required/></label><label>Password<input type="password" value={password} onChange={e=>setPassword(e.target.value)} required/></label><button className="btn btn-dark submit-btn" disabled={busy}>{busy?"Signing in…":"Sign in"} <ArrowUpRight size={16}/></button>{error&&<p className="form-status">{error}</p>}</form><div className="login-demo-note"><ShieldCheck size={16}/><span>Sign in with the administrator credentials configured for this deployment.</span></div><Link className="underlink" to="/">← Back to website</Link></div></div>;
-if(!isKnownAdminPath(adminPath))return <NotFound/>;return <div className="admin-shell"><aside className="admin-sidebar"><Link className="brand brand-light" to="/"><span className="brand-icon">A<span>✦</span></span><span className="brand-name">astrratech<small>LEARNING ACADEMY</small></span></Link><div className="admin-label">WORKSPACE</div><button className={section==="overview"?"admin-nav active":"admin-nav"} onClick={()=>setSection("overview")}><LayoutDashboard size={16}/>Overview</button><button className={section==="contact"?"admin-nav active":"admin-nav"} onClick={()=>setSection("contact")}><MapPin size={16}/>Get in Touch</button>{contentTypes.map(([k,label])=><button key={k} className={section===k?"admin-nav active":"admin-nav"} onClick={()=>setSection(k)}><LayoutDashboard size={16}/>{label}</button>)}<button className={section==="enquiries"?"admin-nav active":"admin-nav"} onClick={()=>setSection("enquiries")}><MessageSquare size={16}/>Enquiries</button><div className="admin-sidebar-bottom"><Link to="/"><ArrowRight size={15}/> View website</Link><button onClick={logout}><LogOut size={15}/> Sign out</button></div></aside><main className="admin-main"><div className="admin-topbar"><div><span>ASTRRATECH / CONTENT STUDIO</span><h1>{section==="overview"?"Overview":section==="enquiries"?"Enquiries":section==="contact"?"Get in Touch":contentTypes.find(x=>x[0]===section)?.[1]}</h1></div><span className="admin-user"><span>AD</span> Admin demo</span></div>{error&&<div className="admin-alert">{error}<button onClick={()=>setError("")}>×</button></div>}{section==="overview"?<section className="admin-list-card"><div className="admin-card-heading"><div><span className="eyebrow"><span/> WORKSPACE</span><h2>Manage academy content</h2></div></div><p className="body-copy">Choose a section to view, create, and update academy content.</p><div className="admin-overview-links">{contentTypes.map(([key,label])=><button type="button" key={key} className="admin-entry admin-overview-link" onClick={()=>setSection(key)}><span className="admin-entry-avatar"><LayoutDashboard size={16}/></span><span className="admin-entry-copy"><strong>{label}</strong><small>{overviewCounts[key]??"?"} records ? Manage {label.toLowerCase()}</small></span><ArrowRight size={15}/></button>)}<button type="button" className="admin-entry admin-overview-link" onClick={()=>setSection("enquiries")}><span className="admin-entry-avatar"><MessageSquare size={16}/></span><span className="admin-entry-copy"><strong>Enquiries</strong><small>{overviewCounts.enquiries??"?"} enquiries ? Manage student enquiries</small></span><ArrowRight size={15}/></button></div></section>:section==="contact"?<ContactSettingsEditor contact={contactForm} loading={refreshing.includes(section)} loaded={contactLoaded} loadError={error.startsWith("Could not refresh contact:")?error:""} onRefresh={()=>loadItems(section)} onSaved={setContactForm}/>:section!=="enquiries"?<div className="admin-workspace"><section className="admin-edit-card"><div className="admin-card-heading"><div><span className="eyebrow"><span/> {editId?"EDIT ENTRY":"CONTENT EDITOR"}</span><h2>{editId?"Update content":"Create new content"}</h2></div>{editId&&<button className="plain-button" onClick={resetForm}>Cancel edit</button>}</div><form className="admin-content-form" onSubmit={saveItem}>{["courses","notices","resources"].includes(section)&&<><label>Title *<input required maxLength="140" value={form.title} onChange={e=>setForm({...form,title:e.target.value})}/></label><div className="form-two"><label>Category<input value={form.category} onChange={e=>setForm({...form,category:e.target.value})}/></label><label>{section==="courses"?"Duration":"Type"}<input value={section==="courses"?form.duration:form.type} onChange={e=>setForm({...form,[section==="courses"?"duration":"type"]:e.target.value})}/></label></div>{section==="courses"&&<label>Icon / symbol<input value={form.icon} onChange={e=>setForm({...form,icon:e.target.value})}/></label>}</>}{section==="faculty"&&<><label>Full name *<input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></label><label>Role *<input required maxLength="140" value={form.role} onChange={e=>setForm({...form,role:e.target.value})}/></label><label>Qualification / experience<input value={form.qualification} onChange={e=>setForm({...form,qualification:e.target.value})}/></label><label>Faculty biography *<textarea required rows="4" maxLength="1200" value={form.description} onChange={e=>setForm({...form,description:e.target.value})}/></label><AdminImageField value={form.image} onChange={image=>setForm({...form,image})}/></>}{section==="results"&&<><label>Learner label *<input required maxLength="140" value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></label><label>Programme / role *<input required maxLength="500" value={form.role} onChange={e=>setForm({...form,role:e.target.value})}/></label><div className="form-two"><label>Year<input maxLength="20" value={form.year} onChange={e=>setForm({...form,year:e.target.value})}/></label><label>Score / achievement *<input required maxLength="500" value={form.score} onChange={e=>setForm({...form,score:e.target.value})}/></label></div></>}{section==="testimonials"&&<><label>Display name *<input required maxLength="140" value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></label><label>Role / label<input value={form.role} onChange={e=>setForm({...form,role:e.target.value})}/></label><label>Testimonial quote *<textarea required maxLength="1200" rows="3" value={form.quote} onChange={e=>setForm({...form,quote:e.target.value})}/></label></>}{section!=="faculty"&&section!=="results"&&section!=="testimonials"&&<label>Description *<textarea required rows="4" value={form.description} onChange={e=>setForm({...form,description:e.target.value})}/></label>}{section==="notices"&&<label>Date / timing label<input value={form.date} onChange={e=>setForm({...form,date:e.target.value})}/></label>}<label className="check-label"><input type="checkbox" checked={form.featured} onChange={e=>setForm({...form,featured:e.target.checked})}/> Feature this entry</label><button className="btn btn-dark submit-btn" disabled={busy}>{busy?"Saving…":editId?"Save changes":"Add to website"} <ArrowUpRight size={16}/></button></form></section><section className="admin-list-card"><div className="admin-card-heading"><div><span className="eyebrow"><span/> PUBLISHED CONTENT</span><h2>{items.length} entries</h2></div><button type="button" className="icon-button" onClick={()=>loadItems(section)} aria-label={section==="enquiries"?"Refresh Enquiries":"Refresh Published Content"} aria-busy={refreshing.includes(section)}>{refreshing.includes(section)?<LoaderCircle className="spin" size={17}/>:<LoaderCircle size={17}/>}</button></div>{items.length===0?<p className="empty-state">No content found. Check MongoDB connection and seed data.</p>:items.map(item=><div className="admin-entry" key={item._id}><div className="admin-entry-avatar">{section==="faculty"&&item.image?<img src={imageUrl(item.image)||imageFallback} onError={e=>{e.currentTarget.onerror=null;e.currentTarget.src=imageFallback}} alt="" style={{width:"100%",height:"100%",objectFit:"cover",borderRadius:6}}/>:(section==="faculty"?(item.name||item.title):(item.title||item.name)||"?").slice(0,1)}</div><div className="admin-entry-copy"><strong>{section==="faculty"?(item.name||item.title):(item.title||item.name)}</strong><small>{section==="faculty"?[item.role,item.qualification,item.featured?"Featured":"Not featured"].filter(Boolean).join(" · "):`${item.category||item.role||item.type||"Content"} ${item.sample!==false?" · Demo data":""}`}</small></div><button className="icon-button" onClick={()=>edit(item)} aria-label="Edit"><Pencil size={15}/></button><button className="icon-button danger" onClick={()=>remove(item._id)} aria-label="Delete"><Trash2 size={15}/></button></div>)}</section></div>:<EnquiryInbox enquiries={enquiries} loading={refreshing.includes(section)} onRefresh={()=>loadItems(section)} onUpdated={saved=>setEnquiries(old=>old.map(item=>String(item._id)===String(saved._id)?saved:item))} />}</main></div>}
+function Admin(){const {pathname:adminPath}=useLocation();const [sessionRetry,setSessionRetry]=useState(0);const [sessionError,setSessionError]=useState("");const [token,setToken]=useState(()=>getAdminEntrySession(localStorage,adminPath));useEffect(()=>{function openLogin(){beginAdminLoginEntry(localStorage);setToken("");setSessionReady(true);setItems([]);setEnquiries([]);setSessionError("")}window.addEventListener("astratech:admin-login-entry",openLogin);return()=>window.removeEventListener("astratech:admin-login-entry",openLogin)},[]);const [sessionReady,setSessionReady]=useState(()=>!getAdminSession(localStorage.getItem("astratech_admin_token")));const [email,setEmail]=useState("");const [password,setPassword]=useState("");const [error,setError]=useState("");const [searchParams,setSearchParams]=useSearchParams();const [section,setSectionState]=useState(()=>getAdminSection(searchParams.toString(),adminPath));function setSection(next){const sectionValue=getAdminSection(`?section=${encodeURIComponent(next)}`);setSectionState(sectionValue);const nextParams=new URLSearchParams(searchParams);nextParams.set("section",sectionValue);setSearchParams(nextParams,{replace:true})}const [refreshing,setRefreshing]=useState([]);const requests=useRef(new Map());const sectionRef=useRef(section);sectionRef.current=section;const [items,setItems]=useState([]);const [contactForm,setContactForm]=useState(DEFAULT_CONTACT_SETTINGS);const [contactLoaded,setContactLoaded]=useState(false);const [enquiries,setEnquiries]=useState([]);const [overviewCounts,setOverviewCounts]=useState({});const [busy,setBusy]=useState(false);const [editId,setEditId]=useState("");const [form,setForm]=useState({title:"",category:"",duration:"",icon:"✳",description:"",downloadUrl:"",name:"",role:"",qualification:"",image:"",year:"",score:"",quote:"",type:"Notice",date:"",featured:false,sample:false});function throwIfNotArray(data,target){if(!Array.isArray(data))throw new Error(target+" endpoint did not return a list.")}const contentTypes=[["courses","Courses"],["faculty","Faculty"],["results","Results"],["testimonials","Testimonials"],["notices","Notices"],["resources","Resources"]];async function loadItems(s=section){const requestId=(requests.current.get(s)||0)+1;requests.current.set(s,requestId);setRefreshing(old=>old.includes(s)?old:[...old,s]);setError("");try{const targets=s==="overview"?ADMIN_OVERVIEW_SECTIONS:[s];const entries=s==="contact"?[["contact",await api(getAdminDataPath(s))]]:await Promise.all(targets.map(async target=>{const data=await api(getAdminDataPath(target));throwIfNotArray(data,target);return [target,data]}));if(requests.current.get(s)===requestId&&sectionRef.current===s){if(s==="overview")setOverviewCounts(Object.fromEntries(entries.map(([target,data])=>[target,data.length])));else if(s==="enquiries")setEnquiries(entries[0][1]);else if(s==="contact"){setContactForm({...DEFAULT_CONTACT_SETTINGS,...entries[0][1]});setContactLoaded(true);}else setItems(entries[0][1]);}return entries.length===1?entries[0][1]:Object.fromEntries(entries);}catch(e){if(requests.current.get(s)===requestId&&sectionRef.current===s){if(s==="overview")setOverviewCounts(Object.fromEntries(ADMIN_OVERVIEW_SECTIONS.map(key=>[key,null])));if(s==="contact")setContactLoaded(false);setError("Could not refresh "+s+": "+e.message)}return null}finally{if(requests.current.get(s)===requestId)setRefreshing(old=>old.filter(x=>x!==s))}}useEffect(()=>{if(!token){setSessionReady(true);setSessionError("");return}let active=true;setSessionReady(false);setSessionError("");api("/admin/enquiries").then(()=>{if(active)setSessionReady(true)}).catch(e=>{if(!active)return;if(isAdminSessionInvalid(e.status)){localStorage.removeItem("astratech_admin_token");setToken("");setError("Your admin session is invalid or expired. Please sign in again.")}else{setSessionError("Could not verify admin session: "+e.message)}});return()=>{active=false}},[token,sessionRetry]);useEffect(()=>{if(token&&sessionReady)loadItems(section)},[token,sessionReady,section]);useEffect(()=>{setSectionState(getAdminSection(searchParams.toString(),adminPath))},[searchParams,adminPath]);async function login(e){e.preventDefault();setBusy(true);setError("");try{const d=await api("/admin/login",{method:"POST",body:JSON.stringify({email,password})});localStorage.setItem("astratech_admin_token",d.token);setToken(d.token)}catch(e){setError(e.message)}finally{setBusy(false)}}function resetForm(){setEditId("");setForm({title:"",category:"",duration:"",icon:"✳",description:"",downloadUrl:"",name:"",role:"",qualification:"",image:"",year:"",score:"",quote:"",type:"Notice",date:"",featured:false,sample:false})}function edit(item){setEditId(item._id);setForm(buildAdminEditForm(section,item,form));window.scrollTo({top:0,behavior:"smooth"})}async function saveItem(e){e.preventDefault();setBusy(true);setError("");try{const payload=buildAdminPayload(section,form);const d=await api(`/admin/${section}${editId?`/${editId}`:""}`,{method:editId?"PUT":"POST",body:JSON.stringify(payload)});setItems(old=>editId?replaceAdminRecord(old,d):[d,...old]);resetForm();await loadItems(section)}catch(e){setError(e.message)}finally{setBusy(false)}}async function remove(id){const item=items.find(entry=>String(entry._id)===String(id));const name=section==="faculty"?(item?.name||item?.title):["results","testimonials"].includes(section)?(item?.name||item?.title):(item?.title||item?.name);const label=typeof name==="string"&&name.trim()?name.trim():"this entry";if(!confirm(`Delete "${label}"?`))return;try{await api(`/admin/${section}/${id}`,{method:"DELETE"});setItems(old=>old.filter(x=>x._id!==id));await loadItems(section)}catch(e){setError(e.message)}}function logout(){localStorage.removeItem("astratech_admin_token");setToken("");setSessionReady(true);setItems([])}if(token&&!sessionReady)return <div className="admin-login-page"><div className="admin-login-card"><p role="status">{sessionError||"Checking admin session?"}</p>{sessionError&&<><button className="btn btn-dark submit-btn" onClick={()=>setSessionRetry(value=>value+1)}>Retry verification</button><button className="admin-image-button" onClick={()=>{localStorage.removeItem("astratech_admin_token");setToken("");setSessionError("");setError("")}}>Sign in instead</button></>}</div></div>;if(!token)return <div className="admin-login-page"><div className="admin-login-card"><Link className="brand" to="/"><span className="brand-icon">A<span>✦</span></span><span className="brand-name">Astrratech<small>LEARNING ACADEMY</small></span></Link><div className="eyebrow"><span/> CONTENT STUDIO</div><h1>Welcome<br/><em>back.</em></h1><p>Sign in to manage academy website content.</p><form onSubmit={login}><label>Admin email<input type="email" value={email} onChange={e=>setEmail(e.target.value)} required/></label><label>Password<input type="password" value={password} onChange={e=>setPassword(e.target.value)} required/></label><button className="btn btn-dark submit-btn" disabled={busy}>{busy?"Signing in…":"Sign in"} <ArrowUpRight size={16}/></button>{error&&<p className="form-status">{error}</p>}</form><div className="login-demo-note"><ShieldCheck size={16}/><span>Sign in with the administrator credentials configured for this deployment.</span></div><Link className="underlink" to="/">← Back to website</Link></div></div>;
+if(!isKnownAdminPath(adminPath))return <NotFound/>;return <div className="admin-shell"><aside className="admin-sidebar"><Link className="brand brand-light" to="/"><span className="brand-icon">A<span>✦</span></span><span className="brand-name">astrratech<small>LEARNING ACADEMY</small></span></Link><nav aria-label="Admin navigation"><div className="admin-label">WORKSPACE</div><button aria-current={section==="overview"?"page":undefined} className={section==="overview"?"admin-nav active":"admin-nav"} onClick={()=>setSection("overview")}><LayoutDashboard size={16}/>Overview</button><button aria-current={section==="contact"?"page":undefined} className={section==="contact"?"admin-nav active":"admin-nav"} onClick={()=>setSection("contact")}><MapPin size={16}/>Get in Touch</button>{contentTypes.map(([k,label])=><button key={k} aria-current={section===k?"page":undefined} className={section===k?"admin-nav active":"admin-nav"} onClick={()=>setSection(k)}><LayoutDashboard size={16}/>{label}</button>)}<button aria-current={section==="enquiries"?"page":undefined} className={section==="enquiries"?"admin-nav active":"admin-nav"} onClick={()=>setSection("enquiries")}><MessageSquare size={16}/>Enquiries</button></nav><div className="admin-sidebar-bottom"><Link to="/"><ArrowRight size={15}/> View website</Link><button onClick={logout}><LogOut size={15}/> Sign out</button></div></aside><main className="admin-main"><div className="admin-topbar"><div><span>ASTRRATECH / CONTENT STUDIO</span><h1>{section==="overview"?"Overview":section==="enquiries"?"Enquiries":section==="contact"?"Get in Touch":contentTypes.find(x=>x[0]===section)?.[1]}</h1></div><span className="admin-user"><span>AD</span> Admin demo</span></div>{error&&<div className="admin-alert" role="alert">{error}<button type="button" aria-label="Dismiss error" onClick={()=>setError("")}>×</button></div>}{section==="overview"?<section className="admin-list-card"><div className="admin-card-heading"><div><span className="eyebrow"><span/> WORKSPACE</span><h2>Manage academy content</h2></div></div><p className="body-copy">Choose a section to view, create, and update academy content.</p><div className="admin-overview-links">{contentTypes.map(([key,label])=><button type="button" key={key} className="admin-entry admin-overview-link" onClick={()=>setSection(key)}><span className="admin-entry-avatar"><LayoutDashboard size={16}/></span><span className="admin-entry-copy"><strong>{label}</strong><small>{refreshing.includes("overview")?"Loading count…":typeof overviewCounts[key]==="number"?`${overviewCounts[key]} records`:"Count unavailable"} Manage {label.toLowerCase()}</small></span><ArrowRight size={15}/></button>)}<button type="button" className="admin-entry admin-overview-link" onClick={()=>setSection("enquiries")}><span className="admin-entry-avatar"><MessageSquare size={16}/></span><span className="admin-entry-copy"><strong>Enquiries</strong><small>{refreshing.includes("overview")?"Loading count…":typeof overviewCounts.enquiries==="number"?`${overviewCounts.enquiries} enquiries`:"Count unavailable"} Manage student enquiries</small></span><ArrowRight size={15}/></button></div></section>:section==="contact"?<ContactSettingsEditor contact={contactForm} loading={refreshing.includes(section)} loaded={contactLoaded} loadError={error.startsWith("Could not refresh contact:")?error:""} onRefresh={()=>loadItems(section)} onSaved={setContactForm}/>:section!=="enquiries"?<div className="admin-workspace"><section className="admin-edit-card"><div className="admin-card-heading"><div><span className="eyebrow"><span/> {editId?"EDIT ENTRY":"CONTENT EDITOR"}</span><h2>{editId?"Update content":"Create new content"}</h2></div>{editId&&<button className="plain-button" onClick={resetForm}>Cancel edit</button>}</div><form className="admin-content-form" onSubmit={saveItem}>{["courses","notices","resources"].includes(section)&&<><label>Title *<input required maxLength="140" value={form.title} onChange={e=>setForm({...form,title:e.target.value})}/></label><div className="form-two"><label>Category<input value={form.category} onChange={e=>setForm({...form,category:e.target.value})}/></label><label>{section==="courses"?"Duration":"Type"}<input value={section==="courses"?form.duration:form.type} onChange={e=>setForm({...form,[section==="courses"?"duration":"type"]:e.target.value})}/></label></div>{section==="courses"&&<label>Icon / symbol<input value={form.icon} onChange={e=>setForm({...form,icon:e.target.value})}/></label>}</>}{section==="faculty"&&<><label>Full name *<input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></label><label>Role *<input required maxLength="140" value={form.role} onChange={e=>setForm({...form,role:e.target.value})}/></label><label>Qualification / experience<input value={form.qualification} onChange={e=>setForm({...form,qualification:e.target.value})}/></label><label>Faculty biography *<textarea required rows="4" maxLength="1200" value={form.description} onChange={e=>setForm({...form,description:e.target.value})}/></label><AdminImageField value={form.image} onChange={image=>setForm({...form,image})}/></>}{section==="results"&&<><label>Learner label *<input required maxLength="140" value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></label><label>Programme / role *<input required maxLength="500" value={form.role} onChange={e=>setForm({...form,role:e.target.value})}/></label><div className="form-two"><label>Year<input maxLength="20" value={form.year} onChange={e=>setForm({...form,year:e.target.value})}/></label><label>Score / achievement *<input required maxLength="500" value={form.score} onChange={e=>setForm({...form,score:e.target.value})}/></label></div></>}{section==="testimonials"&&<><label>Display name *<input required maxLength="140" value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></label><label>Role / label<input value={form.role} onChange={e=>setForm({...form,role:e.target.value})}/></label><label>Testimonial quote *<textarea required maxLength="1200" rows="3" value={form.quote} onChange={e=>setForm({...form,quote:e.target.value})}/></label></>}{section!=="faculty"&&section!=="results"&&section!=="testimonials"&&<label>Description *<textarea required rows="4" value={form.description} onChange={e=>setForm({...form,description:e.target.value})}/></label>}{section==="resources"&&<label>Download URL (optional)<input type="text" inputMode="url" maxLength="2000" value={form.downloadUrl} onChange={e=>setForm({...form,downloadUrl:e.target.value})}/></label>}{section==="notices"&&<label>Date / timing label<input value={form.date} onChange={e=>setForm({...form,date:e.target.value})}/></label>}<label className="check-label"><input type="checkbox" checked={form.featured} onChange={e=>setForm({...form,featured:e.target.checked})}/> Feature this entry</label><label className="check-label"><input type="checkbox" checked={form.sample} onChange={e=>setForm({...form,sample:e.target.checked})}/> Keep as sample (hidden publicly)</label><button className="btn btn-dark submit-btn" disabled={busy}>{busy?"Saving…":editId?"Save changes":"Add to website"} <ArrowUpRight size={16}/></button></form></section><section className="admin-list-card"><div className="admin-card-heading"><div><span className="eyebrow"><span/> PUBLISHED CONTENT</span><h2>{items.length} entries</h2></div><button type="button" className="icon-button" onClick={()=>loadItems(section)} aria-label={section==="enquiries"?"Refresh Enquiries":"Refresh Published Content"} aria-busy={refreshing.includes(section)}>{refreshing.includes(section)?<LoaderCircle className="spin" size={17}/>:<LoaderCircle size={17}/>}</button></div>{refreshing.includes(section)?<p className="empty-state" role="status">Loading entries…</p>:error.startsWith("Could not refresh "+section+":")?<p className="empty-state">Content could not be loaded. Use Refresh to try again.</p>:items.length===0?<p className="empty-state">No entries yet. Add an entry using the form.</p>:items.map(item=><div className="admin-entry" key={item._id}><div className="admin-entry-avatar">{section==="faculty"&&item.image?<img src={imageUrl(item.image)||imageFallback} onError={e=>{e.currentTarget.onerror=null;e.currentTarget.src=imageFallback}} alt="" style={{width:"100%",height:"100%",objectFit:"cover",borderRadius:6}}/>:(section==="faculty"?(item.name||item.title):(item.title||item.name)||"?").slice(0,1)}</div><div className="admin-entry-copy"><strong>{section==="faculty"?(item.name||item.title):(item.title||item.name)}</strong><small>{section==="faculty"?[item.role,item.qualification,item.featured?"Featured":"Not featured"].filter(Boolean).join(" · "):(item.category||item.role||item.type||"Content")}{item.sample===true?" · Private sample":""}</small></div><button className="icon-button" onClick={()=>edit(item)} aria-label={`Edit ${section==="faculty"?(item.name||item.title):(item.title||item.name)||"entry"}`}><Pencil size={15}/></button><button className="icon-button danger" onClick={()=>remove(item._id)} aria-label={`Delete ${section==="faculty"?(item.name||item.title):(item.title||item.name)||"entry"}`}><Trash2 size={15}/></button></div>)}</section></div>:<EnquiryInbox enquiries={enquiries} loading={refreshing.includes(section)} onRefresh={()=>loadItems(section)} onUpdated={saved=>setEnquiries(old=>old.map(item=>String(item._id)===String(saved._id)?saved:item))} />}</main></div>}
 function CareersPage(){return <Careers/>}
-function NotFound(){return <><PageHero eyebrow="PAGE NOT FOUND" title={<>Let's get you<br/><em>back on track.</em></>} copy="The page you're looking for doesn't exist in this demo."/><section className="section wrap"><ButtonLink to="/">Back to Home</ButtonLink></section></>}
+function NotFound(){return <><PageHero eyebrow="PAGE NOT FOUND" title={<>Let's get you<br/><em>back on track.</em></>} copy="The page you're looking for isn't available."/><section className="section wrap"><ButtonLink to="/">Back to Home</ButtonLink></section></>}
 function ScrollToTop(){const {pathname}=useLocation();useEffect(()=>{window.scrollTo(0,0)},[pathname]);return null}
-export default function App(){const {content,refresh,loading}=useContent();const {pathname}=useLocation();const adminRoute=isAdminEntryPath(pathname);return <><ScrollToTop/>{!adminRoute&&<><PublicCursor/><Header/></>}<AnimatePresence mode="wait"><Routes><Route path="/" element={<Home content={content}/>}/><Route path="/about" element={<About/>}/><Route path="/courses" element={<Courses content={content}/>}/><Route path="/courses/:courseId" element={<CourseDetail content={content} loading={loading}/>}/><Route path="/faculty" element={<Faculty content={content}/>}/><Route path="/results" element={<Results content={content}/>}/><Route path="/admissions" element={<Admissions/>}/><Route path="/resources" element={<Resources content={content}/>}/><Route path="/resources/:resourceId" element={<ResourceDetail content={content} loading={loading}/>}/><Route path="/testimonials" element={<Testimonials content={content}/>}/><Route path="/notices" element={<Notices content={content}/>}/><Route path="/careers" element={<CareersPage/>}/><Route path="/faq" element={<FAQs/>}/><Route path="/contact" element={<Contact content={content}/>}/><Route path="/privacy" element={<Policy/>}/><Route path="/terms" element={<Policy terms/>}/><Route path="/staff-access/*" element={<Admin/>}/><Route path="/admin/*" element={<NotFound/>}/><Route path="*" element={<NotFound/>}/></Routes></AnimatePresence>{!adminRoute&&<Footer contact={content.contact}/>}</>}
+export default function App(){
+ const {content,loading,errors,refresh}=useContent();
+ const {pathname}=useLocation();
+ const adminRoute=isAdminEntryPath(pathname);
+ const pageRoutes=<AnimatePresence mode="wait"><Routes>
+  <Route path="/" element={<Home content={content} loading={loading} errors={errors}/>}/>
+  <Route path="/about" element={<About/>}/>
+  <Route path="/courses" element={<Courses content={content} loading={loading} errors={errors}/>}/>
+  <Route path="/courses/:courseId" element={<CourseDetail content={content} loading={loading} error={errors.courses} refresh={refresh}/>}/>
+  <Route path="/faculty" element={<Faculty content={content} loading={loading} errors={errors}/>}/>
+  <Route path="/results" element={<Results content={content} loading={loading} errors={errors} refresh={refresh}/>}/>
+  <Route path="/admissions" element={<Admissions/>}/>
+  <Route path="/resources" element={<Resources content={content} loading={loading} errors={errors}/>}/>
+  <Route path="/resources/:resourceId" element={<ResourceDetail content={content} loading={loading} error={errors.resources} refresh={refresh}/>}/>
+  <Route path="/testimonials" element={<Testimonials content={content} loading={loading} errors={errors}/>}/>
+  <Route path="/notices" element={<Notices content={content} loading={loading} errors={errors}/>}/>
+  <Route path="/careers" element={<CareersPage/>}/>
+  <Route path="/faq" element={<FAQs/>}/>
+  <Route path="/contact" element={<Contact content={content}/>}/>
+  <Route path="/privacy" element={<Policy/>}/>
+  <Route path="/terms" element={<Policy terms/>}/>
+  <Route path="/staff-access/*" element={<Admin/>}/>
+  <Route path="/admin/*" element={<NotFound/>}/>
+  <Route path="*" element={<NotFound/>}/>
+ </Routes></AnimatePresence>;
+ return <><ScrollToTop/><PageMetadata content={content} loading={loading}/><AdminLoginErrorAnnouncement/>{!adminRoute&&<><PublicCursor/><Header/>{Object.keys(errors).length>0&&<div className="content-load-alert" role="alert"><span>Some website content could not be loaded.</span><button type="button" onClick={refresh}>Try again</button></div>}</>}{adminRoute||pathname==="/" ? pageRoutes : <main>{pageRoutes}</main>}{!adminRoute&&<Footer contact={content.contact}/>}</>
+}

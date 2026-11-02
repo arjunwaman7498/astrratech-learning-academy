@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dns from "node:dns";
+import { createHmac, randomBytes } from "node:crypto";
 import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -28,17 +29,170 @@ export function validateAdminConfiguration(env = process.env) {
   return errors;
 }
 
+const LOCAL_MONGODB_URI = "mongodb://127.0.0.1:27017/astratech_academy";
+
+function safeMongoErrorDetails(error) {
+  const errorType = typeof error?.name === "string" && /^[A-Za-z][A-Za-z0-9]{0,39}$/.test(error.name)
+    ? error.name
+    : "Error";
+  const errorCode = typeof error?.code === "string" && /^[A-Z0-9_]{1,40}$/.test(error.code)
+    ? error.code
+    : undefined;
+  return { errorType, ...(errorCode ? { errorCode } : {}) };
+}
+
+export function getMongoConnectionUri(env = process.env) {
+  const uri = typeof env.MONGODB_URI === "string" ? env.MONGODB_URI.trim() : "";
+  if (uri) return uri;
+  if (env.NODE_ENV === "production") {
+    throw new Error("MONGODB_URI is required when NODE_ENV=production.");
+  }
+  return LOCAL_MONGODB_URI;
+}
+
+export function createHealthHandlers(connection = mongoose.connection) {
+  async function readiness(_req, res) {
+    if (connection.readyState !== 1 || !connection.db) {
+      return res.status(503).json({ status: "unavailable", database: "disconnected" });
+    }
+    try {
+      await connection.db.command({ ping: 1 }, { maxTimeMS: 2000 });
+      return res.json({ status: "ok", database: "connected" });
+    } catch {
+      return res.status(503).json({ status: "unavailable", database: "disconnected" });
+    }
+  }
+
+  function liveness(_req, res) {
+    return res.json({ status: "ok" });
+  }
+
+  return { readiness, liveness };
+}
+
+export function createAdminLoginThrottle({
+  now = Date.now,
+  failureThreshold = 5,
+  windowMs = 15 * 60 * 1000,
+  baseDelayMs = 1000,
+  maxDelayMs = 15 * 60 * 1000,
+  maxEntries = 20000,
+  keySecret = process.env.JWT_SECRET || randomBytes(32).toString("hex")
+} = {}) {
+  const attempts = new Map();
+  const cleanupIntervalMs = 60 * 1000;
+  let lastCleanupAt = 0;
+  const keyFor = (scope, value) => createHmac("sha256", keySecret)
+    .update(`${scope}\0${value}`)
+    .digest("hex");
+
+  function prune(currentTime, force = false) {
+    if (!force && currentTime - lastCleanupAt < cleanupIntervalMs && attempts.size < maxEntries) return;
+    lastCleanupAt = currentTime;
+    for (const [key, state] of attempts) {
+      if (state.blockedUntil <= currentTime && state.windowStartedAt + windowMs <= currentTime) {
+        attempts.delete(key);
+      }
+    }
+    while (attempts.size >= maxEntries) {
+      const oldest = attempts.keys().next();
+      if (oldest.done) break;
+      attempts.delete(oldest.value);
+    }
+  }
+
+  function stateFor(key, currentTime, create = false) {
+    let state = attempts.get(key);
+    if (state && state.windowStartedAt + windowMs <= currentTime && state.blockedUntil <= currentTime) {
+      attempts.delete(key);
+      state = null;
+    }
+    if (!state && create) {
+      prune(currentTime);
+      state = {
+        failures: 0,
+        windowStartedAt: currentTime,
+        blockedUntil: 0,
+        lastSeenAt: currentTime,
+        lastThrottleLogUntil: 0
+      };
+      attempts.set(key, state);
+    }
+    if (state) state.lastSeenAt = currentTime;
+    return state;
+  }
+
+  return {
+    check(ipAddress, account) {
+      const currentTime = now();
+      prune(currentTime);
+      let retryAfterMs = 0;
+      for (const [scope, value] of [["ip", ipAddress], ["account", account]]) {
+        const state = stateFor(keyFor(scope, value), currentTime);
+        if (state?.blockedUntil > currentTime) {
+          const remaining = state.blockedUntil - currentTime;
+          retryAfterMs = Math.max(retryAfterMs, remaining);
+          if (state.lastThrottleLogUntil !== state.blockedUntil) {
+            state.lastThrottleLogUntil = state.blockedUntil;
+            console.warn("Admin login temporarily throttled.", {
+              scope,
+              retryAfterSeconds: Math.ceil(remaining / 1000)
+            });
+          }
+        }
+      }
+      return retryAfterMs;
+    },
+    failed(ipAddress, account) {
+      const currentTime = now();
+      for (const [scope, value] of [["ip", ipAddress], ["account", account]]) {
+        const state = stateFor(keyFor(scope, value), currentTime, true);
+        state.failures += 1;
+        if (state.failures >= failureThreshold) {
+          const exponent = Math.min(state.failures - failureThreshold, 20);
+          const delay = Math.min(baseDelayMs * (2 ** exponent), maxDelayMs);
+          state.blockedUntil = currentTime + delay;
+          if (state.failures === failureThreshold || state.failures % 10 === 0) {
+            console.warn("Repeated admin login failures.", {
+              scope,
+              failureCount: state.failures
+            });
+          }
+        }
+      }
+    },
+    succeeded(ipAddress, account) {
+      attempts.delete(keyFor("ip", ipAddress));
+      attempts.delete(keyFor("account", account));
+    }
+  };
+}
+
+const adminLoginThrottle = createAdminLoginThrottle();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.use(cors({ origin: process.env.CLIENT_URL ? process.env.CLIENT_URL.split(",") : true }));
 app.use(express.json({ limit: "1mb" }));
 
+mongoose.connection.on("disconnected", () => {
+  console.error("MongoDB disconnected; readiness checks will fail.");
+});
+mongoose.connection.on("reconnected", () => {
+  console.info("MongoDB reconnected; readiness checks will resume.");
+});
+mongoose.connection.on("error", error => {
+  console.error("MongoDB connection error.", {
+    ...safeMongoErrorDetails(error)
+  });
+});
+
 const itemSchema = new mongoose.Schema({
   title: { type: String, required: true, trim: true, maxlength: 140 },
   slug: { type: String, trim: true },
   category: { type: String, default: "General" },
   description: { type: String, required: true, maxlength: 1200 },
+  downloadUrl: { type: String, trim: true, maxlength: 2000, default: "" },
   duration: { type: String, default: "" },
   icon: { type: String, default: "✦" },
   image: { type: String, default: "" },
@@ -51,7 +205,7 @@ const itemSchema = new mongoose.Schema({
   type: { type: String, default: "Notice" },
   date: { type: String, default: "" },
   featured: { type: Boolean, default: false },
-  sample: { type: Boolean, default: true }
+  sample: { type: Boolean, default: false }
 }, { timestamps: true, strict: true });
 
 const Course = mongoose.model("Course", itemSchema);
@@ -66,7 +220,7 @@ const contactSettingsSchema = new mongoose.Schema({
   description: { type: String, required: true, trim: true, maxlength: 500 },
   phone: { type: String, trim: true, maxlength: 30, default: "" },
   email: { type: String, trim: true, maxlength: 160, default: "" },
-  address: { type: String, required: true, trim: true, maxlength: 300 },
+  address: { type: String, trim: true, maxlength: 300, default: "" },
   officeHours: { type: String, trim: true, maxlength: 200, default: "" },
   mapUrl: { type: String, trim: true, maxlength: 2000, default: "" }
 }, { timestamps: true, strict: true, versionKey: false });
@@ -83,94 +237,31 @@ const Enquiry = mongoose.model("Enquiry", new mongoose.Schema({
   sample: { type: Boolean, default: false }
 }, { timestamps: true }));
 
-const seedData = {
-  courses: [
-    { title: "Foundation Programme", category: "FOUNDATION", duration: "12 weeks", icon: "✳", description: "Build confidence in essential concepts with guided lessons, deliberate practice and structured revision.", featured: true },
-    { title: "Mathematics Mastery", category: "SUBJECT SUPPORT", duration: "10 weeks", icon: "∑", description: "Strengthen problem-solving skills and develop a clear approach to core mathematics topics.", featured: true },
-    { title: "Science Explorers", category: "SUBJECT SUPPORT", duration: "12 weeks", icon: "⚗", description: "Connect scientific concepts with practical examples, clear explanations and active learning.", featured: true },
-    { title: "Exam Preparation", category: "EXAM READINESS", duration: "16 weeks", icon: "◎", description: "Plan revision, practise question patterns and build a steady exam preparation routine.", featured: true },
-    { title: "English & Communication", category: "SKILL BUILDING", duration: "8 weeks", icon: "Aa", description: "Improve reading, writing, grammar and communication through structured practice." },
-    { title: "Personal Learning Support", category: "GUIDED LEARNING", duration: "Flexible", icon: "↗", description: "A supportive learning path shaped around individual goals and areas for improvement." }
-  ],
-  faculty: [
-    { title: "Mathematics Mentor", name: "Dr. Aanya Mehta", role: "Mathematics Mentor", qualification: "M.Sc. Mathematics · 8 years", image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=800&q=85", description: "Makes challenging ideas feel approachable through clear explanations and practice.", featured: true },
-    { title: "Science Educator", name: "Rohan Kulkarni", role: "Science Educator", qualification: "M.Sc. Physics · 7 years", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=85", description: "Connects classroom concepts to practical examples and curiosity-led learning." },
-    { title: "Language Coach", name: "Neha Sharma", role: "Language Coach", qualification: "M.A. English · 6 years", image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=800&q=85", description: "Helps learners communicate with clarity, confidence and purpose." }
-  ],
-  notices: [
-    { title: "Sample admissions are open", category: "Admissions", type: "Notice", date: "Demo notice", description: "Contact our team to discuss sample course options for the upcoming academic session.", featured: true },
-    { title: "Weekly study planner", category: "Student support", type: "Resource", date: "Demo resource", description: "A sample planning guide to help learners organise weekly study goals." },
-    { title: "Welcome orientation", category: "Community", type: "Event", date: "Demo event", description: "A placeholder event notice. Replace with an approved date before publishing." }
-  ],
-  results: [
-  {
-    title: "Foundation Programme Result",
-    name: "Sample learner A",
-    role: "Foundation programme",
-    year: "2026",
-    score: "92%",
-    description: "Illustrative result for design preview only.",
-    sample: true
-  },
-  {
-    title: "Mathematics Mastery Result",
-    name: "Sample learner B",
-    role: "Mathematics mastery",
-    year: "2026",
-    score: "88%",
-    description: "Illustrative result for design preview only.",
-    sample: true
-  },
-  {
-    title: "Exam Preparation Result",
-    name: "Sample learner C",
-    role: "Exam preparation",
-    year: "2026",
-    score: "95%",
-    description: "Illustrative result for design preview only.",
-    sample: true
-  }
-],
-  testimonials: [
-  {
-    title: "Structured Learning",
-    name: "Aarav M.",
-    role: "Sample student",
-    quote: "The structured lessons helped me break a big goal into smaller, manageable steps.",
-    description: "Sample testimonial — not a real review.",
-    sample: true
-  },
-  {
-    title: "Supportive Learning",
-    name: "Sana K.",
-    role: "Sample student",
-    quote: "I felt comfortable asking questions and could see where I needed more practice.",
-    description: "Sample testimonial — not a real review.",
-    featured: true,
-    sample: true
-  },
-  {
-    title: "Growing Confidence",
-    name: "Riya V.",
-    role: "Sample student",
-    quote: "The learning plan gave me more confidence and helped me stay consistent.",
-    description: "Sample testimonial — not a real review.",
-    sample: true
-  }
-],
-  resources: [
-    { title: "A calmer study week", category: "Study guide", type: "PDF / Sample", description: "A demo study-planning resource. Replace this card with a real approved download before launch." },
-    { title: "Getting ready for assessments", category: "Checklist", type: "Checklist", description: "A sample checklist for preparing materials, setting goals and planning revision." },
-    { title: "How to ask better questions", category: "Learning tips", type: "Article", description: "A short sample article about curiosity, note-taking and asking for help." }
-  ]
-};
-
-async function seedIfEmpty() {
-  for (const [key, Model] of Object.entries({ courses: Course, faculty: Faculty, notices: Notice, results: Result, testimonials: Testimonial, resources: Resource })) {
-    if (await Model.countDocuments() === 0) await Model.insertMany(seedData[key]);
-  }
-}
 const collections = { courses: Course, faculty: Faculty, notices: Notice, results: Result, testimonials: Testimonial, resources: Resource };
+export function validateContentInput(collection, body) {
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return "Content must be submitted as an object.";
+  }
+  if (Object.hasOwn(body, "sample") && typeof body.sample !== "boolean") {
+    return "Sample visibility must be a boolean.";
+  }
+  if (collection === "resources" && body.downloadUrl !== undefined) {
+    if (typeof body.downloadUrl !== "string" || body.downloadUrl.length > 2000) {
+      return "Resource URL must be text and at most 2000 characters.";
+    }
+    if (body.downloadUrl.trim()) {
+      try {
+        const url = new URL(body.downloadUrl);
+        if (url.protocol !== "https:") throw new Error();
+      } catch {
+        if (!/^\/(?!\/)[^\\\s]*$/.test(body.downloadUrl.trim())) {
+          return "Resource URL must be HTTPS or a site-relative path.";
+        }
+      }
+    }
+  }
+  return null;
+}
 function serializeContactSettings(settings = {}) {
   return Object.fromEntries(Object.keys(DEFAULT_CONTACT_SETTINGS).map(key => [
     key,
@@ -190,7 +281,10 @@ export function adminAuth(req, res, next) {
     next();
   } catch { return res.status(401).json({ message: "Session expired. Please sign in again." }); }
 }
-app.get("/api/health", (_req, res) => res.json({ status: "ok", database: mongoose.connection.readyState === 1 ? "connected" : "disconnected" }));
+const healthHandlers = createHealthHandlers();
+app.get("/api/live", healthHandlers.liveness);
+app.get("/api/ready", healthHandlers.readiness);
+app.get("/api/health", healthHandlers.readiness);
 app.get("/api/content/:collection", async (req, res) => {
   if (req.params.collection === "contact") {
     try {
@@ -202,7 +296,7 @@ app.get("/api/content/:collection", async (req, res) => {
   }
   const Model = collections[req.params.collection];
   if (!Model) return res.status(404).json({ message: "Content type not found." });
-  try { res.json(await Model.find().sort({ createdAt: -1 }).lean()); }
+  try { res.json(await Model.find({ sample: { $ne: true } }).sort({ createdAt: -1 }).lean()); }
   catch { res.status(500).json({ message: "Could not load content." }); }
 });
 app.post("/api/enquiries", async (req, res) => {
@@ -238,6 +332,15 @@ app.post("/api/admin/login", async (req, res) => {
   }
   const configErrors = validateAdminConfiguration();
   if (configErrors.length) return res.status(503).json({ message: "Admin authentication is not configured." });
+  const account = email.trim().toLowerCase();
+  const ipAddress = req.socket?.remoteAddress || "unknown";
+  const retryAfterMs = adminLoginThrottle.check(ipAddress, account);
+  if (retryAfterMs > 0) {
+    return res
+      .set("Retry-After", String(Math.ceil(retryAfterMs / 1000)))
+      .status(429)
+      .json({ message: "Too many sign-in attempts. Please wait before trying again." });
+  }
   const adminEmail = process.env.ADMIN_EMAIL.trim();
   const passwordHash = process.env.ADMIN_PASSWORD_HASH;
   const jwtSecret = process.env.JWT_SECRET;
@@ -248,14 +351,22 @@ app.post("/api/admin/login", async (req, res) => {
     return res.status(500).json({ message: "Unable to authenticate right now." });
   }
   if (email.trim().toLowerCase() !== adminEmail.toLowerCase() || !passwordMatches) {
+    adminLoginThrottle.failed(ipAddress, account);
     return res.status(401).json({ message: "Email or password is incorrect." });
   }
+  adminLoginThrottle.succeeded(ipAddress, account);
   const token = jwt.sign({ email: adminEmail, role: "admin" }, jwtSecret, { expiresIn: "8h" });
   res.json({ token, email: adminEmail });
 });
 app.get("/api/admin/enquiries", adminAuth, async (_req, res) => {
   try { res.json(await Enquiry.find().sort({ createdAt: -1 }).lean()); }
   catch { res.status(500).json({ message: "Could not load enquiries." }); }
+});
+app.get("/api/admin/:collection", adminAuth, async (req, res) => {
+  const Model = collections[req.params.collection];
+  if (!Model) return res.status(404).json({ message: "Content type not found." });
+  try { res.json(await Model.find().sort({ createdAt: -1 }).lean()); }
+  catch { res.status(500).json({ message: "Could not load content." }); }
 });
 app.put("/api/admin/enquiries/:id", adminAuth, async (req, res) => {
   const { errors, update } = validateEnquiryUpdate(req.body);
@@ -304,7 +415,9 @@ app.post("/api/admin/images", adminAuth, (req, res, next) => {
 app.post("/api/admin/:collection", adminAuth, async (req, res) => {
   const Model = collections[req.params.collection];
   if (!Model) return res.status(404).json({ message: "Content type not found." });
-  try { const item = await Model.create({ ...req.body, sample: true }); res.status(201).json(item); }
+  const validationError = validateContentInput(req.params.collection, req.body);
+  if (validationError) return res.status(400).json({ message: validationError });
+  try { const item = await Model.create({ ...req.body, sample: req.body.sample === true }); res.status(201).json(item); }
   catch (e) { res.status(400).json({ message: e.message || "Could not create item." }); }
 });
 app.put("/api/admin/contact", adminAuth, async (req, res) => {
@@ -328,8 +441,10 @@ app.put("/api/admin/contact", adminAuth, async (req, res) => {
 app.put("/api/admin/:collection/:id", adminAuth, async (req, res) => {
   const Model = collections[req.params.collection];
   if (!Model) return res.status(404).json({ message: "Content type not found." });
+  const validationError = validateContentInput(req.params.collection, req.body);
+  if (validationError) return res.status(400).json({ message: validationError });
   try {
-    const item = await Model.findByIdAndUpdate(req.params.id, { ...req.body, sample: true }, { new: true, runValidators: true });
+    const item = await Model.findByIdAndUpdate(req.params.id, { ...req.body }, { new: true, runValidators: true });
     if (!item) return res.status(404).json({ message: "Item not found." });
     res.json(item);
   } catch (e) { res.status(400).json({ message: e.message || "Could not update item." }); }
@@ -348,6 +463,34 @@ app.get("*", (req, res, next) => {
   res.sendFile(path.join(clientDist, "index.html"), err => { if (err) res.status(404).send("Build the frontend first."); });
 });
 
+export async function startServer({
+  env = process.env,
+  connect = (uri, options) => mongoose.connect(uri, options),
+  listen = port => new Promise((resolve, reject) => {
+    const server = app.listen(port, () => resolve(server));
+    server.once("error", reject);
+  }),
+  disconnect = () => mongoose.disconnect()
+} = {}) {
+  const uri = getMongoConnectionUri(env);
+  try {
+    await connect(uri, {
+      serverSelectionTimeoutMS: 10000,
+      connectTimeoutMS: 10000
+    });
+    return await listen(Number(env.PORT) || Number(PORT));
+  } catch (error) {
+    try {
+      await disconnect();
+    } catch (disconnectError) {
+      console.error("Could not close the MongoDB connection after startup failed.", {
+        ...safeMongoErrorDetails(disconnectError)
+      });
+    }
+    throw error;
+  }
+}
+
 if (isMainModule) {
   const configErrors = validateAdminConfiguration();
   if (configErrors.length) {
@@ -355,11 +498,14 @@ if (isMainModule) {
     process.exitCode = 1;
   } else {
     dns.setServers(["8.8.8.8", "8.8.4.4"]);
-    mongoose.connect(process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/astratech_academy")
-      .then(async () => { await seedIfEmpty(); console.log("MongoDB connected; demo content ready."); })
-      .catch(err => console.error("MongoDB connection failed. Check MONGODB_URI in .env.", err.message));
-
-    app.listen(PORT, () => console.log(`Astrratech Learning Academy API running at http://localhost:${PORT}`));
+    startServer()
+      .then(() => console.log(`Astrratech Learning Academy API running on port ${PORT}`))
+      .catch(error => {
+        console.error("Server startup failed. Verify MONGODB_URI, database network access, and startup configuration.", {
+          ...safeMongoErrorDetails(error)
+        });
+        process.exitCode = 1;
+      });
   }
 }
 

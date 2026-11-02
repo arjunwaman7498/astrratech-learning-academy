@@ -1,6 +1,6 @@
 # Astrratech Learning Academy — Premium React + MongoDB Atlas Website
 
-A responsive coaching-academy website prototype based on the provided `Academy Website Requirements` handoff. It uses **sample/demo content only**. Brand name, contact details, faculty, results and testimonials are fictional placeholders.
+A responsive coaching-academy website and database-backed content management system. Public content is loaded from the API; records marked as samples are kept out of public collection responses.
 
 ## Stack
 - React + Vite
@@ -9,17 +9,17 @@ A responsive coaching-academy website prototype based on the provided `Academy W
 - Lucide React icons
 - Express API
 - MongoDB Atlas via Mongoose
-- JWT admin sessions and bcrypt dependency available for extending auth
+- JWT-protected admin sessions with bcrypt password-hash verification
 
 ## Included requirements checklist
 - [x] Home page with requested section sequence: header, hero, trust points, courses, why choose us, results, faculty, testimonials, resources/notices, admissions/FAQ preview, final CTA and footer
 - [x] About Us
 - [x] Courses listing and course detail cards/links
 - [x] Faculty / Teachers
-- [x] Results, Awards & Achievements (clearly labelled sample data)
+- [x] Results, Awards & Achievements
 - [x] Admissions page and steps
 - [x] Resources / Study Materials
-- [x] Student Testimonials (clearly labelled sample content)
+- [x] Student Testimonials
 - [x] News / Events / Notices
 - [x] Careers
 - [x] FAQs
@@ -28,11 +28,11 @@ A responsive coaching-academy website prototype based on the provided `Academy W
 - [x] Responsive mobile/tablet/desktop layouts
 - [x] Hover/focus states, gentle animations, reduced-motion support
 - [x] Enquiry form validation and success/error feedback
-- [x] Backend endpoint to save demo enquiries to MongoDB
+- [x] Public enquiry form saves submissions to MongoDB
 - [x] Admin login and dashboard to create/edit/delete courses, faculty, results, testimonials, notices and resources
 - [x] Admin-editable Get in Touch heading, description, phone, email, address, office hours and map embed
 - [x] Admin enquiry inbox
-- [x] MongoDB collections auto-seeded with sample content when empty
+- [x] Authenticated admin reads and CRUD for MongoDB-backed content collections
 - [x] README and environment example
 
 ## Run locally
@@ -57,7 +57,9 @@ Requirements: Node.js 18+ and npm.
 9. Open `http://localhost:5173`.
 10. Admin: open the unlinked `http://localhost:5173/staff-access` entry and sign in using `ADMIN_EMAIL` and the password corresponding to `ADMIN_PASSWORD_HASH`. `/admin` and nested `/admin/...` URLs show the not-found page; admin API endpoints continue to require a valid admin token.
 
-If `MONGODB_URI` is not set, the server tries local MongoDB at `mongodb://127.0.0.1:27017/astratech_academy`. The website uses built-in sample fallback data if the API/database is unavailable, but CRUD and enquiries require a working database connection.
+For local development, the server uses `mongodb://127.0.0.1:27017/astratech_academy` when `MONGODB_URI` is not set. In production (`NODE_ENV=production`), `MONGODB_URI` is required; the server connects before it starts accepting requests and exits with an error if startup cannot complete. The server does not seed or overwrite content at startup. Database connection strings and credentials are not written to logs.
+
+Public collection endpoints return records that are not marked `sample: true`; records with a missing `sample` field remain public for backward compatibility. Admin collection reads require an admin token and include private/sample records. New content is public by default; the admin editor's “Keep as sample (hidden publicly)” option keeps a record private. Existing records are not automatically changed, so review existing sample records in the admin panel before publishing them. API failures show an error state rather than replacing database content with built-in demo records.
 
 ## Admin image uploads
 Admins can enter an image URL or upload JPEG, PNG, WebP, GIF, BMP, or AVIF images (maximum 5 MB). Uploaded files are checked against their MIME type and file signature before being sent to Cloudinary. The existing content `image` field stores Cloudinary's permanent HTTPS URL, so images remain available across server restarts and deployments. SVG uploads are not accepted.
@@ -70,8 +72,11 @@ SMTP email notifications are optional. To enable an admin notification and an au
 The authenticated admin Enquiry inbox supports text search, status/course filters, click-to-call/email, follow-up date/time, private internal notes, and persisted status updates. Public enquiry submissions receive a success confirmation only after MongoDB has saved the enquiry.
 
 ## API overview
-- `GET /api/health`
+- `GET /api/live` (process liveness)
+- `GET /api/ready` (database readiness; HTTP 503 when unavailable)
+- `GET /api/health` (backwards-compatible readiness check)
 - `GET /api/content/:collection`
+- `GET /api/admin/:collection` (admin token required; includes sample/private records)
 - `GET /api/content/contact`
 - `PUT /api/admin/contact` (admin token required)
 - `POST /api/enquiries`
@@ -87,16 +92,17 @@ Collections: `courses`, `faculty`, `results`, `testimonials`, `notices`, `resour
 
 ## Before production deployment
 - Replace all sample data with approved content; sample outcomes and testimonials must not be presented as real.
+- Review existing records marked as samples and publish only verified content.
 - Update privacy and refund policies with the academy's approved wording.
-- Replace placeholder contact details and validate phone/WhatsApp/email destinations.
+- Add approved contact details through the admin contact settings.
 - Configure MongoDB Atlas network access with least privilege and a strong database password.
 - Rotate the configured admin password and JWT secret periodically; use HTTPS and secure hosting. Consider rate limiting, audit logs, password reset, stronger validation and security headers before public launch.
 - Configure `CLIENT_URL` for the deployed frontend origin.
 - Test every route, mobile layout, form submission, admin CRUD, accessibility, loading speed and broken links.
 - Run focused backend auth tests with `npm test`.
-- Resources have individual view pages and support view/download links when an approved file URL is supplied. The current resource schema/admin form does not store a file URL, so real downloads remain unavailable until an approved file-storage field and workflow are added.
+- Resources have individual view pages and persist an optional HTTPS or site-relative download URL.
 - Enquiries are saved to the database, but no real email/CRM/WhatsApp notification integration is configured because the approved destination was not supplied.
-- Phone and WhatsApp header links are intentionally not invented; replace placeholders once approved.
+- Enquiry replies are not implemented; the inbox currently supports persisted statuses, follow-up details, and private internal notes.
 
 ## Note
 This is a complete runnable project scaffold, not a claim that it has already been installed, tested against your Atlas cluster or deployed. Atlas credentials are never included in this ZIP.

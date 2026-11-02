@@ -400,6 +400,20 @@
     }
 }
 
+@media (min-width: 761px) and (max-width: 900px) {
+    .header {
+        gap: 14px;
+    }
+
+    .nav {
+        gap: 8px;
+    }
+
+    .nav a {
+        font-size: 10px;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .header,
     .brand,
@@ -482,7 +496,7 @@
 
 
 /* =========================================
-   ASTRATECH — PREMIUM HERO REFINEMENT
+   ASTRRATECH — PREMIUM HERO REFINEMENT
    ========================================= */
 
 /* 1. Refine the overall hero composition */
@@ -761,7 +775,7 @@
 }
 
 /* =========================================
-   ASTRATECH — HERO LAYOUT FINISHING TOUCHES
+   ASTRRATECH — HERO LAYOUT FINISHING TOUCHES
    ========================================= */
 
 /* Keep the headline elegant and balanced */
@@ -847,7 +861,7 @@
     }
 }
 
-/* ASTRATECH — CURSOR-REACTIVE HERO HEADING */
+/* ASTRRATECH — CURSOR-REACTIVE HERO HEADING */
 
 .hero-reactive-title {
   position: relative;
@@ -888,7 +902,7 @@
   }
 }
 
-/* Astratech — preserve original hero typography */
+/* Astrratech — preserve original hero typography */
 .hero-particle-heading {
   position: relative;
   width: 100%;
@@ -1065,7 +1079,7 @@
 }
 
 /* =========================================
-   ASTRATECH — SOFT AURORA HERO BACKGROUND
+   ASTRRATECH — SOFT AURORA HERO BACKGROUND
    ========================================= */
 
 
@@ -1201,7 +1215,7 @@
   animation: astratechAurora 24s ease-in-out infinite alternate;
 }
 
-/* Astratech — full-viewport aurora background */
+/* Astrratech — full-viewport aurora background */
 .hero.wrap {
   position: relative;
   isolation: isolate;
@@ -1285,7 +1299,7 @@
 
 
 /* ==========================================
-   ASTRATECH — PREMIUM HOMEPAGE COURSE CARDS
+   ASTRRATECH — PREMIUM HOMEPAGE COURSE CARDS
    ========================================== */
 
 #root .section-soft .course-grid .course-card-wrap {
@@ -1908,6 +1922,35 @@
    RESULTS SECTION — PREMIUM CARD INTERACTIONS
 ========================================= */
 
+#results-preview .results-empty-state,
+#results-page .results-empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 150px;
+  padding: 24px;
+  border: 1px solid rgba(16, 32, 63, 0.10);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.48);
+  color: #243858;
+  text-align: center;
+}
+
+#results-preview .results-empty-state > svg,
+#results-page .results-empty-state > svg {
+  flex: 0 0 auto;
+  color: #315fc2;
+}
+
+#results-preview .results-empty-state p,
+#results-page .results-empty-state p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
 #results-preview .result-card {
   position: relative;
   overflow: hidden;
@@ -2056,7 +2099,7 @@
 #results-preview .results-note p {
   margin: 0;
   color: #243858;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.8;
 }
 
@@ -2088,7 +2131,7 @@
   }
 
   #results-preview .results-note p {
-    font-size: 11px;
+    font-size: 13px;
   }
 }
 
@@ -2138,6 +2181,15 @@
 
   #results-preview .section-end > .btn:hover {
     transform: none;
+  }
+}
+
+@media (max-width: 600px) {
+  #results-preview .results-empty-state,
+  #results-page .results-empty-state {
+    min-height: 125px;
+    gap: 11px;
+    padding: 18px;
   }
 }
 
@@ -2318,7 +2370,7 @@
 .faculty-card .faculty-desc {
   margin-top: 13px;
   color: #53627a;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.85;
   letter-spacing: 0.005em;
 }
@@ -2337,7 +2389,7 @@
   }
 
   .faculty-card .faculty-desc {
-    font-size: 11px;
+    font-size: 13px;
     line-height: 1.8;
   }
 }
@@ -4228,7 +4280,7 @@ main > .cta-strip {
 
 
 /* ==========================================
-   ASTRATECH — COURSES PAGE CARD REFINEMENT
+   ASTRRATECH — COURSES PAGE CARD REFINEMENT
    Scoped exclusively to #courses-page
 ========================================== */
 
@@ -4395,7 +4447,7 @@ main > .cta-strip {
 }
 
 /* ==========================================
-   ASTRATECH — FULL FACULTY PAGE CARD EFFECTS
+   ASTRRATECH — FULL FACULTY PAGE CARD EFFECTS
    Homepage styles remain unchanged
 ========================================== */
 
@@ -4502,7 +4554,7 @@ main > .cta-strip {
 }
 
 /* ==========================================
-   ASTRATECH — RESULTS PAGE CARD ANIMATIONS
+   ASTRRATECH — RESULTS PAGE CARD ANIMATIONS
    Scoped exclusively to #results-page
 ========================================== */
 
@@ -4599,7 +4651,7 @@ main > .cta-strip {
   }
 }
 /* ==========================================
-   ASTRATECH — RESOURCES PAGE CARD INTERACTIONS
+   ASTRRATECH — RESOURCES PAGE CARD INTERACTIONS
    Scoped exclusively to #resources-page
 ========================================== */
 
@@ -4704,7 +4756,7 @@ main > .cta-strip {
 }
 
 /* ==========================================
-   ASTRATECH — ADMISSIONS STEP INTERACTIONS
+   ASTRRATECH — ADMISSIONS STEP INTERACTIONS
    Scoped exclusively to #admissions-page
 ========================================== */
 
@@ -4755,7 +4807,7 @@ main > .cta-strip {
 }
 
 /* ==========================================
-   ASTRATECH — ADMISSIONS TIMELINE HOVER
+   ASTRRATECH — ADMISSIONS TIMELINE HOVER
    Scoped exclusively to #admissions-page
 ========================================== */
 
@@ -4814,7 +4866,7 @@ main > .cta-strip {
 }
 
 /* ==========================================
-   ASTRATECH — CONTACT DETAIL INTERACTIONS
+   ASTRRATECH — CONTACT DETAIL INTERACTIONS
    Scoped exclusively to the Contact page
 ========================================== */
 
@@ -4875,7 +4927,7 @@ main > .cta-strip {
 }
 
 /* ==========================================
-   ASTRATECH — CONTACT FORM INTERACTIONS
+   ASTRRATECH — CONTACT FORM INTERACTIONS
 ========================================== */
 
 .contact-form input,
@@ -4893,6 +4945,14 @@ main > .cta-strip {
   border-color: #356fe0;
   outline: none;
   box-shadow: 0 0 0 3px rgba(53, 111, 224, 0.10);
+}
+
+.contact-form input:focus-visible,
+.contact-form select:focus-visible,
+.contact-form textarea:focus-visible {
+  outline: 3px solid #315fc2;
+  outline-offset: 2px;
+  box-shadow: none;
 }
 
 .contact-form .submit-btn {
@@ -4943,7 +5003,7 @@ main > .cta-strip {
 }
 
 /* ==========================================
-   ASTRATECH — HOMEPAGE HORIZONTAL OVERFLOW FIX
+   ASTRRATECH — HOMEPAGE HORIZONTAL OVERFLOW FIX
    Scoped exclusively to the homepage
 ========================================== */
 

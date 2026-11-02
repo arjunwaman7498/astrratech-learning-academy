@@ -8,12 +8,12 @@ test("maps the Overview dashboard to supported content and enquiries APIs only",
     "courses", "faculty", "results", "testimonials", "notices", "resources", "enquiries"
   ]);
   assert.deepEqual(ADMIN_OVERVIEW_SECTIONS.map(getAdminDataPath), [
-    "/content/courses",
-    "/content/faculty",
-    "/content/results",
-    "/content/testimonials",
-    "/content/notices",
-    "/content/resources",
+    "/admin/courses",
+    "/admin/faculty",
+    "/admin/results",
+    "/admin/testimonials",
+    "/admin/notices",
+    "/admin/resources",
     "/admin/enquiries"
   ]);
   assert.equal(getAdminDataPath("contact"), "/content/contact");

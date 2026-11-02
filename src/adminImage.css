@@ -8,7 +8,7 @@
 .admin-image-details{flex:1;min-width:0}
 .admin-image-details strong,.admin-image-details small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .admin-image-details strong{font-size:11px;color:#14233b}
-.admin-image-details small{margin-top:4px;color:#687386;font-size:9px}
+.admin-image-details small{margin-top:4px;color:#626d7f;font-size:9px}
 .admin-image-actions{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:10px}
 .admin-image-file-input{display:none!important}
 .admin-image-button,.admin-image-remove{min-height:31px;padding:7px 10px;border:1px solid #dcdfe7;border-radius:4px;background:#fff;color:#142a4a;font:600 9px "DM Sans",sans-serif;cursor:pointer}
